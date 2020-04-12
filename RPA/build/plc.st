@@ -1,3 +1,97 @@
+TYPE
+  LOGLEVEL : (CRITICAL, WARNING, INFO, DEBUG) := INFO;
+END_TYPE
+
+FUNCTION_BLOCK LOGGER
+  VAR_INPUT
+    TRIG : BOOL;
+    MSG : STRING;
+    LEVEL : LOGLEVEL := INFO;
+  END_VAR
+  VAR
+    TRIG0 : BOOL;
+  END_VAR
+
+  IF TRIG AND NOT TRIG0 THEN
+  {{
+   LogMessage(GetFbVar(LEVEL),(char*)GetFbVar(MSG, .body),GetFbVar(MSG, .len));
+  }}
+  END_IF;
+  TRIG0:=TRIG;
+END_FUNCTION_BLOCK
+
+
+
+FUNCTION_BLOCK python_eval
+  VAR_INPUT
+    TRIG : BOOL;
+    CODE : STRING;
+  END_VAR
+  VAR_OUTPUT
+    ACK : BOOL;
+    RESULT : STRING;
+  END_VAR
+  VAR
+    STATE : DWORD;
+    BUFFER : STRING;
+    PREBUFFER : STRING;
+    TRIGM1 : BOOL;
+    TRIGGED : BOOL;
+  END_VAR
+
+  {extern void __PythonEvalFB(int, PYTHON_EVAL*);__PythonEvalFB(0, data__);}
+END_FUNCTION_BLOCK
+
+FUNCTION_BLOCK python_poll
+  VAR_INPUT
+    TRIG : BOOL;
+    CODE : STRING;
+  END_VAR
+  VAR_OUTPUT
+    ACK : BOOL;
+    RESULT : STRING;
+  END_VAR
+  VAR
+    STATE : DWORD;
+    BUFFER : STRING;
+    PREBUFFER : STRING;
+    TRIGM1 : BOOL;
+    TRIGGED : BOOL;
+  END_VAR
+
+  {extern void __PythonEvalFB(int, PYTHON_EVAL*);__PythonEvalFB(1,(PYTHON_EVAL*)(void*)data__);}
+END_FUNCTION_BLOCK
+
+FUNCTION_BLOCK python_gear
+  VAR_INPUT
+    N : UINT;
+    TRIG : BOOL;
+    CODE : STRING;
+  END_VAR
+  VAR_OUTPUT
+    ACK : BOOL;
+    RESULT : STRING;
+  END_VAR
+  VAR
+    py_eval : python_eval;
+    COUNTER : UINT;
+    ADD10_OUT : UINT;
+    EQ13_OUT : BOOL;
+    SEL15_OUT : UINT;
+    AND7_OUT : BOOL;
+  END_VAR
+
+  ADD10_OUT := ADD(COUNTER, 1);
+  EQ13_OUT := EQ(N, ADD10_OUT);
+  SEL15_OUT := SEL(EQ13_OUT, ADD10_OUT, 0);
+  COUNTER := SEL15_OUT;
+  AND7_OUT := AND(EQ13_OUT, TRIG);
+  py_eval(TRIG := AND7_OUT, CODE := CODE);
+  ACK := py_eval.ACK;
+  RESULT := py_eval.RESULT;
+END_FUNCTION_BLOCK
+
+
 PROGRAM superstates
   VAR
     WDT : DINT := 0;
@@ -5,16 +99,19 @@ PROGRAM superstates
     a0 : BOOL;
     a1 : BOOL;
     b0 : BOOL;
-    b2 : BOOL;
     b1 : BOOL;
     c0 : BOOL;
     c1 : BOOL;
     d0 : BOOL;
+    d1 : BOOL;
     Emg : BOOL := 0;
     manual : BOOL := 0;
     service : BOOL := 0;
     auto : BOOL := 0;
     start : BOOL := 0;
+    EmergencyOK : BOOL := 0;
+    K0F : BOOL := 0;
+    FailureOK : BOOL := 0;
   END_VAR
 
   INITIAL_STEP INIT:
@@ -27,14 +124,14 @@ PROGRAM superstates
   STEP IDLE:
   END_STEP
 
-  TRANSITION (PRIORITY := 1) FROM IDLE TO AutoProduction
+  TRANSITION (PRIORITY := 1) FROM IDLE TO K0
     := auto;
   END_TRANSITION
 
-  STEP AutoProduction:
+  STEP K0:
   END_STEP
 
-  TRANSITION FROM AutoProduction TO K1
+  TRANSITION FROM K0 TO K1
     := prox;
   END_TRANSITION
 
@@ -42,7 +139,7 @@ PROGRAM superstates
   END_STEP
 
   TRANSITION FROM K1 TO K2
-    := a1;
+    := 2s/a1;
   END_TRANSITION
 
   STEP K2:
@@ -127,7 +224,7 @@ PROGRAM superstates
   END_STEP
 
   TRANSITION FROM EMERGENCY TO IDLE
-    := 1;
+    := EmergencyOK;
   END_TRANSITION
 
   TRANSITION FROM K9 TO K1
@@ -202,15 +299,30 @@ PROGRAM superstates
     := Emg;
   END_TRANSITION
 
-  TRANSITION FROM AutoProduction TO EMERGENCY
+  TRANSITION FROM K0 TO EMERGENCY
     := Emg;
   END_TRANSITION
 
-  TRANSITION FROM AutoProduction TO AutoProduction
+  TRANSITION FROM K0 TO K0Fail
     := (WDT > 5);
   END_TRANSITION
 
-  TRANSITION (PRIORITY := 3) FROM IDLE TO IDLE
+  STEP K0Fail:
+    K0F(S);
+  END_STEP
+
+  TRANSITION FROM K0Fail TO Failure
+    := 1;
+  END_TRANSITION
+
+  STEP Failure:
+  END_STEP
+
+  TRANSITION FROM Failure TO IDLE
+    := FailureOK;
+  END_TRANSITION
+
+  TRANSITION (PRIORITY := 3) FROM IDLE TO INIT
     := service;
   END_TRANSITION
 
