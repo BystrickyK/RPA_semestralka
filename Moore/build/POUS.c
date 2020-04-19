@@ -200,6 +200,42 @@ __end:
 
 
 
+void SUPERSTATEAP_init__(SUPERSTATEAP *data__, BOOL retain) {
+  __INIT_VAR(data__->EN,__BOOL_LITERAL(TRUE),retain)
+  __INIT_VAR(data__->ENO,__BOOL_LITERAL(TRUE),retain)
+  __INIT_VAR(data__->ROW,0,retain)
+  __INIT_VAR(data__->COL,0,retain)
+  __INIT_VAR(data__->OUT,0,retain)
+  {
+    static const __ARRAY_OF_INT_11_11 temp = {{510,1,-1,-1,-1,-1,-1,-1,-1,-1,-1,510,-1,2,-1,-1,-1,-1,-1,-1,-1,-1,510,-1,-1,3,-1,-1,-1,-1,-1,-1,-1,510,-1,-1,-1,4,-1,-1,-1,-1,-1,-1,510,-1,-1,-1,-1,5,-1,6,-1,-1,-1,510,-1,-1,-1,-1,-1,3,-1,-1,-1,-1,510,-1,-1,-1,-1,-1,-1,-1,7,-1,-1,510,-1,-1,-1,-1,-1,-1,-1,-1,8,-1,510,-1,-1,-1,-1,-1,-1,-1,-1,-1,9,510,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,510,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1}};
+    __SET_VAR(data__->,TRANSITIONMATRIX,,temp);
+  }
+}
+
+// Code part
+void SUPERSTATEAP_body__(SUPERSTATEAP *data__) {
+  // Control execution
+  if (!__GET_VAR(data__->EN)) {
+    __SET_VAR(data__->,ENO,,__BOOL_LITERAL(FALSE));
+    return;
+  }
+  else {
+    __SET_VAR(data__->,ENO,,__BOOL_LITERAL(TRUE));
+  }
+  // Initialise TEMP variables
+
+  __SET_VAR(data__->,OUT,,__GET_VAR(data__->TRANSITIONMATRIX,.table[(__GET_VAR(data__->ROW,)) - (0)][(__GET_VAR(data__->COL,)) - (0)]));
+
+  goto __end;
+
+__end:
+  return;
+} // SUPERSTATEAP_body__() 
+
+
+
+
+
 void MOOREAUTOMATON_init__(MOOREAUTOMATON *data__, BOOL retain) {
   __INIT_VAR(data__->A0,1,retain)
   __INIT_VAR(data__->A1,0,retain)
@@ -213,12 +249,25 @@ void MOOREAUTOMATON_init__(MOOREAUTOMATON *data__, BOOL retain) {
   __INIT_VAR(data__->CURRENTSTATE,0,retain)
   __INIT_VAR(data__->SENSOROUTPUT,0x0000,retain)
   __INIT_VAR(data__->CONTROLLEROUTPUT,0,retain)
+  __INIT_VAR(data__->TESTVAR,0,retain)
+  __INIT_VAR(data__->COL,0,retain)
+  __INIT_VAR(data__->TMP,0,retain)
+  __INIT_VAR(data__->TMP0,0,retain)
+  SUPERSTATEAP_init__(&data__->SUPERSTATE,retain);
   {
     static const __ARRAY_OF_WORD_12 temp = {{0x0154,0x0155,0x00D5,0x00B5,0x00AD,0x00B5,0x00B3,0x00AB,0x00B3,0x00D3,0x00D5,0x0155}};
     __SET_VAR(data__->,STATE,,temp);
   }
   {
-    static const __ARRAY_OF_BYTE_12 temp = {{0x00,0x80,0x20,0x30,0x20,0x28,0x30,0x20,0x00,0x04,0x40,0x00}};
+    static const __ARRAY_OF_WORD_12 temp = {{0x0200,0x0001,0x0080,0x0020,0x0008,0x0014,0x0002,0x0012,0x0040,0x0004,0x0100,0}};
+    __SET_VAR(data__->,TRANSITIONMASKS,,temp);
+  }
+  {
+    static const __ARRAY_OF_INT_11_11 temp = {{510,1,-1,-1,-1,-1,-1,-1,-1,-1,-1,510,-1,2,-1,-1,-1,-1,-1,-1,-1,-1,510,-1,-1,3,-1,-1,-1,-1,-1,-1,-1,510,-1,-1,-1,4,-1,-1,-1,-1,-1,-1,510,-1,-1,-1,-1,5,-1,6,-1,-1,-1,510,-1,-1,-1,-1,-1,3,-1,-1,-1,-1,510,-1,-1,-1,-1,-1,-1,-1,7,-1,-1,510,-1,-1,-1,-1,-1,-1,-1,-1,8,-1,510,-1,-1,-1,-1,-1,-1,-1,-1,-1,9,510,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,510,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1}};
+    __SET_VAR(data__->,TRANSITIONMATRIX,,temp);
+  }
+  {
+    static const __ARRAY_OF_BYTE_12 temp = {{0x00,0x80,0x20,0x30,0x20,0x28,0x00,0x04,0x40,0x00,0,0}};
     __SET_VAR(data__->,STATEOUTPUT,,temp);
   }
 }
@@ -227,8 +276,16 @@ void MOOREAUTOMATON_init__(MOOREAUTOMATON *data__, BOOL retain) {
 void MOOREAUTOMATON_body__(MOOREAUTOMATON *data__) {
   // Initialise TEMP variables
 
-  if ((__GET_VAR(data__->SENSOROUTPUT,) == __GET_VAR(data__->STATE,.table[((__GET_VAR(data__->CURRENTSTATE,) + 1)) - (0)]))) {
-    __SET_VAR(data__->,CURRENTSTATE,,(__GET_VAR(data__->CURRENTSTATE,) + 1));
+  for(__GET_VAR(data__->COL,) = 0; __GET_VAR(data__->COL,) <= 10; __GET_VAR(data__->COL,)++) {
+    if ((__GET_VAR(data__->TRANSITIONMATRIX,.table[(((100 == 0)?0:(__GET_VAR(data__->CURRENTSTATE,) % 100))) - (0)][(__GET_VAR(data__->COL,)) - (0)]) != -1)) {
+      if (((__GET_VAR(data__->SENSOROUTPUT,) & __GET_VAR(data__->TRANSITIONMASKS,.table[(__GET_VAR(data__->COL,)) - (0)])) == __GET_VAR(data__->TRANSITIONMASKS,.table[(__GET_VAR(data__->COL,)) - (0)]))) {
+        __SET_VAR(data__->,CURRENTSTATE,,__GET_VAR(data__->TRANSITIONMATRIX,.table[(((100 == 0)?0:(__GET_VAR(data__->CURRENTSTATE,) % 100))) - (0)][(__GET_VAR(data__->COL,)) - (0)]));
+        __SET_VAR(data__->SUPERSTATE.,ROW,,4);
+        __SET_VAR(data__->SUPERSTATE.,COL,,5);
+        SUPERSTATEAP_body__(&data__->SUPERSTATE);
+        __SET_VAR(data__->,TMP,,__GET_VAR(data__->SUPERSTATE.OUT));
+      };
+    };
   };
   __SET_VAR(data__->,CONTROLLEROUTPUT,,__GET_VAR(data__->STATEOUTPUT,.table[(__GET_VAR(data__->CURRENTSTATE,)) - (0)]));
 
