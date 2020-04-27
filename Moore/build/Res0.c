@@ -17,21 +17,36 @@ extern unsigned long long common_ticktime__;
 #include "POUS.c"
 
 BOOL TASK0;
-MOOREAUTOMATON RES0__INSTANCE0;
-#define INSTANCE0 RES0__INSTANCE0
+BOOL WDT_CLOCK;
+SUPERSTATE_MACHINE RES0__SSM;
+#define SSM RES0__SSM
+AUTOPRODUCTION RES0__AP;
+#define AP RES0__AP
+WATCHDOGTIMER RES0__WDTIMER;
+#define WDTIMER RES0__WDTIMER
 
 void RES0_init__(void) {
   BOOL retain;
   retain = 0;
   
   TASK0 = __BOOL_LITERAL(FALSE);
-  MOOREAUTOMATON_init__(&INSTANCE0,retain);
+  WDT_CLOCK = __BOOL_LITERAL(FALSE);
+  SUPERSTATE_MACHINE_init__(&SSM,retain);
+  AUTOPRODUCTION_init__(&AP,retain);
+  WATCHDOGTIMER_init__(&WDTIMER,retain);
 }
 
 void RES0_run__(unsigned long tick) {
-  TASK0 = !(tick % 1);
+  TASK0 = !(tick % 10);
+  WDT_CLOCK = !(tick % 1);
   if (TASK0) {
-    MOOREAUTOMATON_body__(&INSTANCE0);
+    SUPERSTATE_MACHINE_body__(&SSM);
+  }
+  if (TASK0) {
+    AUTOPRODUCTION_body__(&AP);
+  }
+  if (WDT_CLOCK) {
+    WATCHDOGTIMER_body__(&WDTIMER);
   }
 }
 

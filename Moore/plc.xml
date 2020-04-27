@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <project xmlns:ns1="http://www.plcopen.org/xml/tc6_0201" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.plcopen.org/xml/tc6_0201">
   <fileHeader companyName="Unknown" productName="Unnamed" productVersion="1" creationDateTime="2020-04-12T15:34:46"/>
-  <contentHeader name="Unnamed" modificationDateTime="2020-04-19T18:09:48">
+  <contentHeader name="Unnamed" modificationDateTime="2020-04-27T21:21:55">
     <coordinateInfo>
       <fbd>
         <scaling x="10" y="10"/>
@@ -17,113 +17,26 @@
   <types>
     <dataTypes/>
     <pous>
-      <pou name="MooreAutomaton" pouType="program">
+      <pou name="superstate_machine" pouType="program">
         <interface>
+          <externalVars>
+            <variable name="ssm_transitions">
+              <type>
+                <WORD/>
+              </type>
+            </variable>
+            <variable name="current_superstate">
+              <type>
+                <INT/>
+              </type>
+            </variable>
+            <variable name="WDT">
+              <type>
+                <UINT/>
+              </type>
+            </variable>
+          </externalVars>
           <localVars>
-            <variable name="a0">
-              <type>
-                <BOOL/>
-              </type>
-              <initialValue>
-                <simpleValue value="1"/>
-              </initialValue>
-            </variable>
-            <variable name="a1">
-              <type>
-                <BOOL/>
-              </type>
-              <initialValue>
-                <simpleValue value="0"/>
-              </initialValue>
-            </variable>
-            <variable name="b0">
-              <type>
-                <BOOL/>
-              </type>
-              <initialValue>
-                <simpleValue value="1"/>
-              </initialValue>
-            </variable>
-            <variable name="b1">
-              <type>
-                <BOOL/>
-              </type>
-              <initialValue>
-                <simpleValue value="0"/>
-              </initialValue>
-            </variable>
-            <variable name="c0">
-              <type>
-                <BOOL/>
-              </type>
-              <initialValue>
-                <simpleValue value="1"/>
-              </initialValue>
-            </variable>
-            <variable name="c1">
-              <type>
-                <BOOL/>
-              </type>
-              <initialValue>
-                <simpleValue value="0"/>
-              </initialValue>
-            </variable>
-            <variable name="d0">
-              <type>
-                <BOOL/>
-              </type>
-              <initialValue>
-                <simpleValue value="1"/>
-              </initialValue>
-            </variable>
-            <variable name="d1">
-              <type>
-                <BOOL/>
-              </type>
-              <initialValue>
-                <simpleValue value="0"/>
-              </initialValue>
-            </variable>
-            <variable name="prox">
-              <type>
-                <WORD/>
-              </type>
-              <initialValue>
-                <simpleValue value="0"/>
-              </initialValue>
-            </variable>
-            <variable name="currentState">
-              <type>
-                <INT/>
-              </type>
-              <initialValue>
-                <simpleValue value="0"/>
-              </initialValue>
-            </variable>
-            <variable name="sensorOutput">
-              <type>
-                <WORD/>
-              </type>
-              <initialValue>
-                <simpleValue value="2#0000000000000000"/>
-              </initialValue>
-            </variable>
-            <variable name="controllerOutput">
-              <type>
-                <BYTE/>
-              </type>
-              <initialValue>
-                <simpleValue value="0"/>
-              </initialValue>
-            </variable>
-            <variable name="testVar">
-              <type>
-                <INT/>
-              </type>
-              <initialValue>
-                <simpleValue value="0"/>
-              </initialValue>
-            </variable>
             <variable name="col">
               <type>
                 <INT/>
@@ -132,55 +45,147 @@
                 <simpleValue value="0"/>
               </initialValue>
             </variable>
-            <variable name="tmp">
+            <variable name="tmp1">
+              <type>
+                <WORD/>
+              </type>
+              <initialValue>
+                <simpleValue value="0"/>
+              </initialValue>
+            </variable>
+            <variable name="tmp2">
+              <type>
+                <WORD/>
+              </type>
+              <initialValue>
+                <simpleValue value="0"/>
+              </initialValue>
+            </variable>
+            <variable name="tmp3">
               <type>
                 <INT/>
               </type>
               <initialValue>
-                <simpleValue value="0"/>
+                <simpleValue value="123"/>
               </initialValue>
             </variable>
-            <variable name="tmp0">
+          </localVars>
+          <externalVars>
+            <variable name="sensor_output">
               <type>
-                <DINT/>
+                <WORD/>
               </type>
-              <initialValue>
-                <simpleValue value="0"/>
-              </initialValue>
             </variable>
-            <variable name="superstate">
+          </externalVars>
+        </interface>
+        <body>
+          <ST>
+            <xhtml:p><![CDATA[VAR
+transition_matrix: ARRAY[0..5,0..10] OF INT := [
+(*  1     2     4     8     16    32      64      128   256     512      1024
+(*  EM    SAP   APF   SMP   MPF   SSVC    SVCF    EMF   WDOx    RESx     BAD *)
+    4,    1,    -1,   2,    -1,   3,      -1,     -1,   -1,     -1,       -1, (* IDLE *)
+    4,    -1,   0,    -1,   -1,   -1,     -1,     -1,   5,      -1,       -1, (* AP *)
+    4,    -1,   -1,   -1,   0,    -1,     -1,     -1,   -1,     -1,       -1, (* MP *)
+    4,    -1,   -1,   -1,   -1,   -1,     0,      -1,   -1,     -1,       -1, (* SVC *)
+    -1,   -1,   -1,   -1,   -1,   -1,     -1,     0,    -1,     -1,       -1, (* EMG *)
+    4,    -1,   -1,   -1,   -1,   -1,     -1,     -1,   -1,      1,       3   (* FAIL *)    
+  ];
+END_VAR
+
+VAR
+transition_masks: ARRAY[0..10] OF WORD := [
+(*  BAD RESx WDOx  EMF  SVCF SSVC  MPF SMP APF SAP EM   *)
+2#00000_00000000001,
+2#00000_00000000010,
+2#00000_00000000100,
+2#00000_00000001000,
+2#00000_00000010000,
+2#00000_00000100000,
+2#00000_00001000000,
+2#00000_00010000000,
+2#00000_00100000000,
+2#00000_01000000000,
+2#00000_10000000000
+];
+END_VAR
+
+(* superstate transitions *)
+FOR col := 0 TO 10 DO
+  IF (transition_matrix[current_superstate,col] <> -1) THEN
+    IF (ssm_transitions AND transition_masks[col]) = transition_masks[col] THEN
+      current_superstate :=  transition_matrix[current_superstate,col];
+      WDT := 0; (*RESET WDT*)
+    END_IF;
+  END_IF;
+END_FOR;
+
+]]></xhtml:p>
+          </ST>
+        </body>
+      </pou>
+      <pou name="autoproduction" pouType="program">
+        <interface>
+          <externalVars>
+            <variable name="controller_output">
               <type>
-                <derived name="superstateAP"/>
+                <BYTE/>
               </type>
-              <initialValue>
-                <simpleValue value="0"/>
-              </initialValue>
+            </variable>
+            <variable name="current_superstate">
+              <type>
+                <INT/>
+              </type>
+            </variable>
+            <variable name="sensor_output">
+              <type>
+                <WORD/>
+              </type>
+            </variable>
+            <variable name="WDT">
+              <type>
+                <UINT/>
+              </type>
+            </variable>
+            <variable name="ssm_transitions">
+              <type>
+                <WORD/>
+              </type>
+            </variable>
+          </externalVars>
+          <localVars>
+            <variable name="current_state">
+              <type>
+                <INT/>
+              </type>
+            </variable>
+            <variable name="col">
+              <type>
+                <INT/>
+              </type>
             </variable>
           </localVars>
         </interface>
         <body>
           <ST>
             <xhtml:p><![CDATA[VAR
-state: ARRAY[0..11] OF WORD  := [ (* 0 0 0 0 0 0 0 a0 a1 b0 b1 c0 c1 d0 d1 prox *)
-  2#0000000_101010100, (* init                  340 1*)
-  2#0000000_101010101, (* prox -> 1             341 2*)
-  2#0000000_011010101, (* a0 -> 0, a1 -> 1      213 3*)
-  2#0000000_010110101, (* b0 -> 0, b1 -> 1      181 4*)
-  2#0000000_010101101, (* c0 -> 0, c1 -> 1      173 5*)
-  2#0000000_010110101, (* c0 -> 1, c1 -> 0      181 6*)
-  2#0000000_010110011, (* d0 -> 0, d1 -> 1      179 7*)
-  2#0000000_010101011, (* c0 -> 0, c1 -> 1      171 8*)
-  2#0000000_010110011, (* c0 -> 1, c1 -> 0      179 9*)
-  2#0000000_011010011, (* b0 -> 1, b1 -> 0      211 10*)
-  2#0000000_011010101, (* d0 -> 1, d1 -> 0      213 11*)
-  2#0000000_101010101  (* a0 -> 1, a1 -> 0      341 12*)
-  (* back to init state *)
+transition_matrix: ARRAY[0..9,0..9] OF INT := [
+(*     prox  a1      b1      c1      c0d0    d1      c0d1      b0      d0      a0 *)
+        1,    -1,     -1,     -1,      -1,     -1,     -1,      -1,     -1,     -1, (* START - 100 *)
+       -1,     2,     -1,     -1,      -1,     -1,     -1,      -1,     -1,     -1, (* 101 *)
+       -1,    -1,      3,     -1,      -1,     -1,     -1,      -1,     -1,     -1, (* 102 *)
+       -1,    -1,     -1,      4,      -1,     -1,     -1,      -1,     -1,     -1, (* 103 *)
+       -1,    -1,     -1,     -1,       5,     -1,      6,      -1,     -1,     -1, (* 104 *)
+       -1,    -1,     -1,     -1,      -1,      3,     -1,      -1,     -1,     -1, (* 105 *)
+       -1,    -1,     -1,     -1,      -1,     -1,     -1,       7,     -1,     -1, (* 106 *)
+       -1,    -1,     -1,     -1,      -1,     -1,     -1,      -1,      8,     -1, (* 107 *)
+       -1,    -1,     -1,     -1,      -1,     -1,     -1,      -1,     -1,      9, (* 108 *)
+       -1,    -1,     -1,     -1,      -1,     -1,     -1,      -1,     -1,     -1 (* 109 *)
   ];
 END_VAR
 
 VAR
-transitionMasks: ARRAY[0..11] OF WORD  := [ (* 0 0 0 0 0 0 emg a0 a1 b0 b1 c0 c1 d0 d1 prox *)
-  2#0000001_000000000,
+mask: ARRAY[0..10] OF WORD  := [ (* 0 0 0 0 0 0 emg a0 a1 b0 b1 c0 c1 d0 d1 prox *)
   2#0000000_000000001, (*       prox 1*)
   2#0000000_010000000, (*       a1 2*)
   2#0000000_000100000, (*       b1 3*)
@@ -196,24 +201,8 @@ transitionMasks: ARRAY[0..11] OF WORD  := [ (* 0 0 0 0 0 0 emg a0 a1 b0 b1 c0 c1
 END_VAR
 
 VAR
-transitionMatrix: ARRAY[0..10,0..10] OF INT := [
-(* emg   prox  a1      b1      c1      c0d0    d1      c0d1      b0      d0      a0 *)
-    510,    1,    -1,     -1,     -1,      -1,     -1,     -1,      -1,     -1,     -1, (* START - 100 *)
-    510,   -1,     2,     -1,     -1,      -1,     -1,     -1,      -1,     -1,     -1, (* 101 *)
-    510,   -1,    -1,      3,     -1,      -1,     -1,     -1,      -1,     -1,     -1, (* 102 *)
-    510,   -1,    -1,     -1,      4,      -1,     -1,     -1,      -1,     -1,     -1, (* 103 *)
-    510,   -1,    -1,     -1,     -1,       5,     -1,      6,      -1,     -1,     -1, (* 104 *)
-    510,   -1,    -1,     -1,     -1,      -1,      3,     -1,      -1,     -1,     -1, (* 105 *)
-    510,   -1,    -1,     -1,     -1,      -1,     -1,     -1,       7,     -1,     -1, (* 106 *)
-    510,   -1,    -1,     -1,     -1,      -1,     -1,     -1,      -1,      8,     -1, (* 107 *)
-    510,   -1,    -1,     -1,     -1,      -1,     -1,     -1,      -1,     -1,      9, (* 108 *)
-    510,   -1,    -1,     -1,     -1,      -1,     -1,     -1,      -1,     -1,     -1, (* 109 *)
-    510,   -1,    -1,     -1,     -1,      -1,     -1,     -1,      -1,     -1,     -1 (* 110 *)
-  ];
-END_VAR 
-
-VAR
-stateOutput: ARRAY[0..11] OF BYTE  := [ (* A+ A- B C D+ D- 0 0 /// State transitions *)
+state_output: ARRAY[0..11] OF BYTE  := [ 
+(* A+ A- B C D+ D- 0 0 /// State transitions *)
   2#00000000, (* init - wait                                       0 0 *)
   2#10000000, (* prox -> 1 - set A+                                128 1*)
   2#00100000, (* a0 -> 0, a1 -> 1 - set B, reset A+ (bistable)     32 2*)
@@ -228,108 +217,76 @@ stateOutput: ARRAY[0..11] OF BYTE  := [ (* A+ A- B C D+ D- 0 0 /// State transit
   ];
 END_VAR
 
-FOR col := 0 TO 10 DO
-  IF (transitionMatrix[currentState MOD 100,col] <> -1) THEN
-    IF (sensorOutput AND transitionMasks[col]) = transitionMasks[col] THEN
-      currentState :=  transitionMatrix[currentState MOD 100,col];
-      superstate(
-      row:=4,
-      col:=5,
-      out => tmp);  
-    END_IF;
-  END_IF;
-END_FOR;
-
-controllerOutput := stateOutput[currentState];
-]]></xhtml:p>
+(* permission *)
+IF current_superstate = 1 THEN
+      
+      (* watchdog timer *)
+(* TODO : make watchdogtimer "overflow" value state dependent instead of fixed 1000
+        add an array with overflow values for each state *)                                                  
+      IF WDT > 6000 THEN
+        (* set failure symptome WDOx as true *)
+        ssm_transitions := ssm_transitions OR 256;
+      END_IF;
+      
+      (* interstate transitions *)
+      FOR col := 0 TO 10 DO
+        IF (transition_matrix[current_state,col] <> -1) THEN
+          IF (sensor_output AND mask[col]) = mask[col] THEN
+            current_state :=  transition_matrix[current_state,col];
+            WDT := 0; (*RESET watchdogtimer*)
+          END_IF;
+        END_IF;
+      END_FOR;
+      
+      (* actuator signal *)
+      controller_output := state_output[current_state];
+      
+END_IF;]]></xhtml:p>
           </ST>
         </body>
       </pou>
-      <pou name="superstateAP" pouType="functionBlock">
+      <pou name="failure" pouType="program">
         <interface>
-          <inputVars>
-            <variable name="sensorOutput">
-              <type>
-                <WORD/>
-              </type>
-              <initialValue>
-                <simpleValue value="0"/>
-              </initialValue>
-            </variable>
-            <variable name="col">
-              <type>
-                <UINT/>
-              </type>
-              <initialValue>
-                <simpleValue value="0"/>
-              </initialValue>
-            </variable>
-          </inputVars>
-          <localVars>
-            <variable name="superstateColumns">
+          <externalVars>
+            <variable name="current_superstate">
               <type>
                 <INT/>
               </type>
-              <initialValue>
-                <simpleValue value="10"/>
-              </initialValue>
             </variable>
-          </localVars>
-          <outputVars>
-            <variable name="state">
-              <type>
-                <INT/>
-              </type>
-              <initialValue>
-                <simpleValue value="0"/>
-              </initialValue>
-            </variable>
-            <variable name="controllerOutput">
+            <variable name="ssm_transitions">
               <type>
                 <WORD/>
               </type>
-              <initialValue>
-                <simpleValue value="0"/>
-              </initialValue>
             </variable>
-          </outputVars>
+          </externalVars>
         </interface>
         <body>
           <ST>
-            <xhtml:p><![CDATA[VAR
-autoproduction: ARRAY[0..10,0..10] OF INT := [
-(*  emg   prox  a1      b1      c1      c0d0    d1      c0d1      b0      d0      a0 *)
-    500,    1,    -1,     -1,     -1,      -1,     -1,     -1,      -1,     -1,     -1, (* START - 100 *)
-    500,   -1,     2,     -1,     -1,      -1,     -1,     -1,      -1,     -1,     -1, (* 101 *)
-    500,   -1,    -1,      3,     -1,      -1,     -1,     -1,      -1,     -1,     -1, (* 102 *)
-    500,   -1,    -1,     -1,      4,      -1,     -1,     -1,      -1,     -1,     -1, (* 103 *)
-    500,   -1,    -1,     -1,     -1,       5,     -1,      6,      -1,     -1,     -1, (* 104 *)
-    500,   -1,    -1,     -1,     -1,      -1,      3,     -1,      -1,     -1,     -1, (* 105 *)
-    500,   -1,    -1,     -1,     -1,      -1,     -1,     -1,       7,     -1,     -1, (* 106 *)
-    500,   -1,    -1,     -1,     -1,      -1,     -1,     -1,      -1,      8,     -1, (* 107 *)
-    500,   -1,    -1,     -1,     -1,      -1,     -1,     -1,      -1,     -1,      9, (* 108 *)
-    500,   -1,    -1,     -1,     -1,      -1,     -1,     -1,      -1,     -1,     -1, (* 109 *)
-  ];
-END_VAR
-
-VAR
-autoproductionMask: ARRAY[0..11] OF WORD  := [ (* 0 0 0 0 0 0 emg a0 a1 b0 b1 c0 c1 d0 d1 prox *)
-  2#0000001_000000000, (*       emg *)
-  2#0000000_000000001, (*       prox 1*)
-  2#0000000_010000000, (*       a1 2*)
-  2#0000000_000100000, (*       b1 3*)
-  2#0000000_000001000, (*       c1 4*)
-  2#0000000_000010100, (*       c0d0 5*)
-  2#0000000_000000010, (*       d1 6*)
-  2#0000000_000010010, (*       c0d1 7*)
-  2#0000000_001000000, (*       b0 8*)
-  2#0000000_000000100, (*       d0 9*)
-  2#0000000_100000000 (*        a0 10*)
-  (* back to init state *)
-  ];
-END_VAR
-
-state := transitionMatrix[sensorOutput,col];]]></xhtml:p>
+            <xhtml:p><![CDATA[(* permission *)
+IF current_superstate = 5 THEN
+  
+      (* set failure symptome WDOx as false *)
+      ssm_transitions := ssm_transitions XOR 256;
+      
+      
+      
+END_IF;]]></xhtml:p>
+          </ST>
+        </body>
+      </pou>
+      <pou name="watchdogtimer" pouType="program">
+        <interface>
+          <externalVars>
+            <variable name="WDT">
+              <type>
+                <UINT/>
+              </type>
+            </variable>
+          </externalVars>
+        </interface>
+        <body>
+          <ST>
+            <xhtml:p><![CDATA[WDT := WDT + 1;]]></xhtml:p>
           </ST>
         </body>
       </pou>
@@ -339,10 +296,41 @@ state := transitionMatrix[sensorOutput,col];]]></xhtml:p>
     <configurations>
       <configuration name="Config0">
         <resource name="Res0">
-          <task name="task0" priority="0" interval="T#20ms">
-            <pouInstance name="instance0" typeName="MooreAutomaton"/>
+          <task name="task0" priority="0" interval="T#100ms">
+            <pouInstance name="SSM" typeName="superstate_machine"/>
+            <pouInstance name="AP" typeName="autoproduction"/>
+          </task>
+          <task name="WDT_clock" priority="0" interval="T#10ms">
+            <pouInstance name="WDTimer" typeName="watchdogtimer"/>
           </task>
         </resource>
+        <globalVars>
+          <variable name="controller_output">
+            <type>
+              <BYTE/>
+            </type>
+          </variable>
+          <variable name="WDT">
+            <type>
+              <UINT/>
+            </type>
+          </variable>
+          <variable name="current_superstate">
+            <type>
+              <INT/>
+            </type>
+          </variable>
+          <variable name="sensor_output">
+            <type>
+              <WORD/>
+            </type>
+          </variable>
+          <variable name="ssm_transitions">
+            <type>
+              <WORD/>
+            </type>
+          </variable>
+        </globalVars>
       </configuration>
     </configurations>
   </instances>

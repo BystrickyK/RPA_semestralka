@@ -200,100 +200,137 @@ __end:
 
 
 
-void SUPERSTATEAP_init__(SUPERSTATEAP *data__, BOOL retain) {
-  __INIT_VAR(data__->EN,__BOOL_LITERAL(TRUE),retain)
-  __INIT_VAR(data__->ENO,__BOOL_LITERAL(TRUE),retain)
-  __INIT_VAR(data__->ROW,0,retain)
-  __INIT_VAR(data__->COL,0,retain)
-  __INIT_VAR(data__->OUT,0,retain)
-  {
-    static const __ARRAY_OF_INT_11_11 temp = {{510,1,-1,-1,-1,-1,-1,-1,-1,-1,-1,510,-1,2,-1,-1,-1,-1,-1,-1,-1,-1,510,-1,-1,3,-1,-1,-1,-1,-1,-1,-1,510,-1,-1,-1,4,-1,-1,-1,-1,-1,-1,510,-1,-1,-1,-1,5,-1,6,-1,-1,-1,510,-1,-1,-1,-1,-1,3,-1,-1,-1,-1,510,-1,-1,-1,-1,-1,-1,-1,7,-1,-1,510,-1,-1,-1,-1,-1,-1,-1,-1,8,-1,510,-1,-1,-1,-1,-1,-1,-1,-1,-1,9,510,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,510,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1}};
-    __SET_VAR(data__->,TRANSITIONMATRIX,,temp);
-  }
+void FAILURE_init__(FAILURE *data__, BOOL retain) {
+  __INIT_EXTERNAL(INT,CURRENT_SUPERSTATE,data__->CURRENT_SUPERSTATE,retain)
+  __INIT_EXTERNAL(WORD,SSM_TRANSITIONS,data__->SSM_TRANSITIONS,retain)
 }
 
 // Code part
-void SUPERSTATEAP_body__(SUPERSTATEAP *data__) {
-  // Control execution
-  if (!__GET_VAR(data__->EN)) {
-    __SET_VAR(data__->,ENO,,__BOOL_LITERAL(FALSE));
-    return;
-  }
-  else {
-    __SET_VAR(data__->,ENO,,__BOOL_LITERAL(TRUE));
-  }
+void FAILURE_body__(FAILURE *data__) {
   // Initialise TEMP variables
 
-  __SET_VAR(data__->,OUT,,__GET_VAR(data__->TRANSITIONMATRIX,.table[(__GET_VAR(data__->ROW,)) - (0)][(__GET_VAR(data__->COL,)) - (0)]));
+  if ((__GET_EXTERNAL(data__->CURRENT_SUPERSTATE,) == 5)) {
+    __SET_EXTERNAL(data__->,SSM_TRANSITIONS,,(__GET_EXTERNAL(data__->SSM_TRANSITIONS,) ^ 256));
+  };
 
   goto __end;
 
 __end:
   return;
-} // SUPERSTATEAP_body__() 
+} // FAILURE_body__() 
 
 
 
 
 
-void MOOREAUTOMATON_init__(MOOREAUTOMATON *data__, BOOL retain) {
-  __INIT_VAR(data__->A0,1,retain)
-  __INIT_VAR(data__->A1,0,retain)
-  __INIT_VAR(data__->B0,1,retain)
-  __INIT_VAR(data__->B1,0,retain)
-  __INIT_VAR(data__->C0,1,retain)
-  __INIT_VAR(data__->C1,0,retain)
-  __INIT_VAR(data__->D0,1,retain)
-  __INIT_VAR(data__->D1,0,retain)
-  __INIT_VAR(data__->PROX,0,retain)
-  __INIT_VAR(data__->CURRENTSTATE,0,retain)
-  __INIT_VAR(data__->SENSOROUTPUT,0x0000,retain)
-  __INIT_VAR(data__->CONTROLLEROUTPUT,0,retain)
-  __INIT_VAR(data__->TESTVAR,0,retain)
+void SUPERSTATE_MACHINE_init__(SUPERSTATE_MACHINE *data__, BOOL retain) {
+  __INIT_EXTERNAL(WORD,SSM_TRANSITIONS,data__->SSM_TRANSITIONS,retain)
+  __INIT_EXTERNAL(INT,CURRENT_SUPERSTATE,data__->CURRENT_SUPERSTATE,retain)
+  __INIT_EXTERNAL(UINT,WDT,data__->WDT,retain)
   __INIT_VAR(data__->COL,0,retain)
-  __INIT_VAR(data__->TMP,0,retain)
-  __INIT_VAR(data__->TMP0,0,retain)
-  SUPERSTATEAP_init__(&data__->SUPERSTATE,retain);
+  __INIT_VAR(data__->TMP1,0,retain)
+  __INIT_VAR(data__->TMP2,0,retain)
+  __INIT_VAR(data__->TMP3,123,retain)
+  __INIT_EXTERNAL(WORD,SENSOR_OUTPUT,data__->SENSOR_OUTPUT,retain)
   {
-    static const __ARRAY_OF_WORD_12 temp = {{0x0154,0x0155,0x00D5,0x00B5,0x00AD,0x00B5,0x00B3,0x00AB,0x00B3,0x00D3,0x00D5,0x0155}};
-    __SET_VAR(data__->,STATE,,temp);
+    static const __ARRAY_OF_INT_6_11 temp = {{4,1,-1,2,-1,3,-1,-1,-1,-1,-1,4,-1,0,-1,-1,-1,-1,-1,5,-1,-1,4,-1,-1,-1,0,-1,-1,-1,-1,-1,-1,4,-1,-1,-1,-1,-1,0,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,0,-1,-1,-1,4,-1,-1,-1,-1,-1,-1,-1,-1,1,3}};
+    __SET_VAR(data__->,TRANSITION_MATRIX,,temp);
   }
   {
-    static const __ARRAY_OF_WORD_12 temp = {{0x0200,0x0001,0x0080,0x0020,0x0008,0x0014,0x0002,0x0012,0x0040,0x0004,0x0100,0}};
-    __SET_VAR(data__->,TRANSITIONMASKS,,temp);
-  }
-  {
-    static const __ARRAY_OF_INT_11_11 temp = {{510,1,-1,-1,-1,-1,-1,-1,-1,-1,-1,510,-1,2,-1,-1,-1,-1,-1,-1,-1,-1,510,-1,-1,3,-1,-1,-1,-1,-1,-1,-1,510,-1,-1,-1,4,-1,-1,-1,-1,-1,-1,510,-1,-1,-1,-1,5,-1,6,-1,-1,-1,510,-1,-1,-1,-1,-1,3,-1,-1,-1,-1,510,-1,-1,-1,-1,-1,-1,-1,7,-1,-1,510,-1,-1,-1,-1,-1,-1,-1,-1,8,-1,510,-1,-1,-1,-1,-1,-1,-1,-1,-1,9,510,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,510,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1}};
-    __SET_VAR(data__->,TRANSITIONMATRIX,,temp);
-  }
-  {
-    static const __ARRAY_OF_BYTE_12 temp = {{0x00,0x80,0x20,0x30,0x20,0x28,0x00,0x04,0x40,0x00,0,0}};
-    __SET_VAR(data__->,STATEOUTPUT,,temp);
+    static const __ARRAY_OF_WORD_11 temp = {{0x0001,0x0002,0x0004,0x0008,0x0010,0x0020,0x0040,0x0080,0x0100,0x0200,0x0400}};
+    __SET_VAR(data__->,TRANSITION_MASKS,,temp);
   }
 }
 
 // Code part
-void MOOREAUTOMATON_body__(MOOREAUTOMATON *data__) {
+void SUPERSTATE_MACHINE_body__(SUPERSTATE_MACHINE *data__) {
   // Initialise TEMP variables
 
   for(__GET_VAR(data__->COL,) = 0; __GET_VAR(data__->COL,) <= 10; __GET_VAR(data__->COL,)++) {
-    if ((__GET_VAR(data__->TRANSITIONMATRIX,.table[(((100 == 0)?0:(__GET_VAR(data__->CURRENTSTATE,) % 100))) - (0)][(__GET_VAR(data__->COL,)) - (0)]) != -1)) {
-      if (((__GET_VAR(data__->SENSOROUTPUT,) & __GET_VAR(data__->TRANSITIONMASKS,.table[(__GET_VAR(data__->COL,)) - (0)])) == __GET_VAR(data__->TRANSITIONMASKS,.table[(__GET_VAR(data__->COL,)) - (0)]))) {
-        __SET_VAR(data__->,CURRENTSTATE,,__GET_VAR(data__->TRANSITIONMATRIX,.table[(((100 == 0)?0:(__GET_VAR(data__->CURRENTSTATE,) % 100))) - (0)][(__GET_VAR(data__->COL,)) - (0)]));
-        __SET_VAR(data__->SUPERSTATE.,ROW,,4);
-        __SET_VAR(data__->SUPERSTATE.,COL,,5);
-        SUPERSTATEAP_body__(&data__->SUPERSTATE);
-        __SET_VAR(data__->,TMP,,__GET_VAR(data__->SUPERSTATE.OUT));
+    if ((__GET_VAR(data__->TRANSITION_MATRIX,.table[(__GET_EXTERNAL(data__->CURRENT_SUPERSTATE,)) - (0)][(__GET_VAR(data__->COL,)) - (0)]) != -1)) {
+      if (((__GET_EXTERNAL(data__->SSM_TRANSITIONS,) & __GET_VAR(data__->TRANSITION_MASKS,.table[(__GET_VAR(data__->COL,)) - (0)])) == __GET_VAR(data__->TRANSITION_MASKS,.table[(__GET_VAR(data__->COL,)) - (0)]))) {
+        __SET_EXTERNAL(data__->,CURRENT_SUPERSTATE,,__GET_VAR(data__->TRANSITION_MATRIX,.table[(__GET_EXTERNAL(data__->CURRENT_SUPERSTATE,)) - (0)][(__GET_VAR(data__->COL,)) - (0)]));
+        __SET_EXTERNAL(data__->,WDT,,0);
       };
     };
   };
-  __SET_VAR(data__->,CONTROLLEROUTPUT,,__GET_VAR(data__->STATEOUTPUT,.table[(__GET_VAR(data__->CURRENTSTATE,)) - (0)]));
 
   goto __end;
 
 __end:
   return;
-} // MOOREAUTOMATON_body__() 
+} // SUPERSTATE_MACHINE_body__() 
+
+
+
+
+
+void WATCHDOGTIMER_init__(WATCHDOGTIMER *data__, BOOL retain) {
+  __INIT_EXTERNAL(UINT,WDT,data__->WDT,retain)
+}
+
+// Code part
+void WATCHDOGTIMER_body__(WATCHDOGTIMER *data__) {
+  // Initialise TEMP variables
+
+  __SET_EXTERNAL(data__->,WDT,,(__GET_EXTERNAL(data__->WDT,) + 1));
+
+  goto __end;
+
+__end:
+  return;
+} // WATCHDOGTIMER_body__() 
+
+
+
+
+
+void AUTOPRODUCTION_init__(AUTOPRODUCTION *data__, BOOL retain) {
+  __INIT_EXTERNAL(BYTE,CONTROLLER_OUTPUT,data__->CONTROLLER_OUTPUT,retain)
+  __INIT_EXTERNAL(INT,CURRENT_SUPERSTATE,data__->CURRENT_SUPERSTATE,retain)
+  __INIT_EXTERNAL(WORD,SENSOR_OUTPUT,data__->SENSOR_OUTPUT,retain)
+  __INIT_EXTERNAL(UINT,WDT,data__->WDT,retain)
+  __INIT_EXTERNAL(WORD,SSM_TRANSITIONS,data__->SSM_TRANSITIONS,retain)
+  __INIT_VAR(data__->CURRENT_STATE,0,retain)
+  __INIT_VAR(data__->COL,0,retain)
+  {
+    static const __ARRAY_OF_INT_10_10 temp = {{1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,2,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,3,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,4,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,5,-1,6,-1,-1,-1,-1,-1,-1,-1,-1,3,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,7,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,8,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,9,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1}};
+    __SET_VAR(data__->,TRANSITION_MATRIX,,temp);
+  }
+  {
+    static const __ARRAY_OF_WORD_11 temp = {{0x0001,0x0080,0x0020,0x0008,0x0014,0x0002,0x0012,0x0040,0x0004,0x0100,0}};
+    __SET_VAR(data__->,MASK,,temp);
+  }
+  {
+    static const __ARRAY_OF_BYTE_12 temp = {{0x00,0x80,0x20,0x30,0x20,0x28,0x00,0x04,0x40,0x00,0,0}};
+    __SET_VAR(data__->,STATE_OUTPUT,,temp);
+  }
+}
+
+// Code part
+void AUTOPRODUCTION_body__(AUTOPRODUCTION *data__) {
+  // Initialise TEMP variables
+
+  if ((__GET_EXTERNAL(data__->CURRENT_SUPERSTATE,) == 1)) {
+    if ((__GET_EXTERNAL(data__->WDT,) > 6000)) {
+      __SET_EXTERNAL(data__->,SSM_TRANSITIONS,,(__GET_EXTERNAL(data__->SSM_TRANSITIONS,) | 256));
+    };
+    for(__GET_VAR(data__->COL,) = 0; __GET_VAR(data__->COL,) <= 10; __GET_VAR(data__->COL,)++) {
+      if ((__GET_VAR(data__->TRANSITION_MATRIX,.table[(__GET_VAR(data__->CURRENT_STATE,)) - (0)][(__GET_VAR(data__->COL,)) - (0)]) != -1)) {
+        if (((__GET_EXTERNAL(data__->SENSOR_OUTPUT,) & __GET_VAR(data__->MASK,.table[(__GET_VAR(data__->COL,)) - (0)])) == __GET_VAR(data__->MASK,.table[(__GET_VAR(data__->COL,)) - (0)]))) {
+          __SET_VAR(data__->,CURRENT_STATE,,__GET_VAR(data__->TRANSITION_MATRIX,.table[(__GET_VAR(data__->CURRENT_STATE,)) - (0)][(__GET_VAR(data__->COL,)) - (0)]));
+          __SET_EXTERNAL(data__->,WDT,,0);
+        };
+      };
+    };
+    __SET_EXTERNAL(data__->,CONTROLLER_OUTPUT,,__GET_VAR(data__->STATE_OUTPUT,.table[(__GET_VAR(data__->CURRENT_STATE,)) - (0)]));
+  };
+
+  goto __end;
+
+__end:
+  return;
+} // AUTOPRODUCTION_body__() 
 
 
 

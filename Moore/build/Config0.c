@@ -10,13 +10,22 @@
 #include "POUS.h"
 
 // CONFIGURATION CONFIG0
+__DECLARE_GLOBAL(BYTE,CONFIG0,CONTROLLER_OUTPUT)
+__DECLARE_GLOBAL(UINT,CONFIG0,WDT)
+__DECLARE_GLOBAL(INT,CONFIG0,CURRENT_SUPERSTATE)
+__DECLARE_GLOBAL(WORD,CONFIG0,SENSOR_OUTPUT)
+__DECLARE_GLOBAL(WORD,CONFIG0,SSM_TRANSITIONS)
 
 void RES0_init__(void);
 
 void config_init__(void) {
   BOOL retain;
   retain = 0;
-  
+  __INIT_GLOBAL(BYTE,CONTROLLER_OUTPUT,__INITIAL_VALUE(0),retain)
+  __INIT_GLOBAL(UINT,WDT,__INITIAL_VALUE(0),retain)
+  __INIT_GLOBAL(INT,CURRENT_SUPERSTATE,__INITIAL_VALUE(0),retain)
+  __INIT_GLOBAL(WORD,SENSOR_OUTPUT,__INITIAL_VALUE(0),retain)
+  __INIT_GLOBAL(WORD,SSM_TRANSITIONS,__INITIAL_VALUE(0),retain)
   RES0_init__();
 }
 
@@ -25,5 +34,5 @@ void RES0_run__(unsigned long tick);
 void config_run__(unsigned long tick) {
   RES0_run__(tick);
 }
-unsigned long long common_ticktime__ = 20000000ULL; /*ns*/
-unsigned long greatest_tick_count__ = (unsigned long)0UL; /*tick*/
+unsigned long long common_ticktime__ = 10000000ULL; /*ns*/
+unsigned long greatest_tick_count__ = (unsigned long)4294967291UL; /*tick*/
