@@ -102,7 +102,7 @@ PROGRAM failure
   IF current_superstate = 5 THEN
     
         (* set failure symptome WDOx as false *)
-        ssm_transitions := ssm_transitions XOR 256;
+        ssm_transitions := ssm_transitions AND NOT 256;
         
         
         
@@ -240,13 +240,7 @@ PROGRAM autoproduction
   (* permission *)
   IF current_superstate = 1 THEN
         
-        (* watchdog timer *)
-  (* TODO : make watchdogtimer "overflow" value state dependent instead of fixed 1000
-          add an array with overflow values for each state *)                                                  
-        IF WDT > 6000 THEN
-          (* set failure symptome WDOx as true *)
-          ssm_transitions := ssm_transitions OR 256;
-        END_IF;
+       
         
         (* interstate transitions *)
         FOR col := 0 TO 10 DO
@@ -260,6 +254,20 @@ PROGRAM autoproduction
         
         (* actuator signal *)
         controller_output := state_output[current_state];
+        
+         (* watchdog timer *)
+  (* TODO : make watchdogtimer "overflow" value state dependent instead of fixed 1000
+          add an array with overflow values for each state *)                                                  
+        IF WDT > 3000 THEN
+          (* set failure symptome WDOx as true *)
+          ssm_transitions := ssm_transitions OR 256;
+        END_IF;
+        
+       (* final state reached *)                                              
+        IF current_state = 9 THEN
+          ssm_transitions := ssm_transitions OR 4;
+          current_state := 0;
+        END_IF;
         
   END_IF;
 END_PROGRAM
@@ -279,6 +287,7 @@ CONFIGURATION Config0
     TASK WDT_clock(INTERVAL := T#10ms,PRIORITY := 0);
     PROGRAM SSM WITH task0 : superstate_machine;
     PROGRAM AP WITH task0 : autoproduction;
+    PROGRAM FAIL WITH task0 : failure;
     PROGRAM WDTimer WITH WDT_clock : watchdogtimer;
   END_RESOURCE
 END_CONFIGURATION

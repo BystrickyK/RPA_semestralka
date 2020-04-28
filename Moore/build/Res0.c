@@ -22,6 +22,8 @@ SUPERSTATE_MACHINE RES0__SSM;
 #define SSM RES0__SSM
 AUTOPRODUCTION RES0__AP;
 #define AP RES0__AP
+FAILURE RES0__FAIL;
+#define FAIL RES0__FAIL
 WATCHDOGTIMER RES0__WDTIMER;
 #define WDTIMER RES0__WDTIMER
 
@@ -33,6 +35,7 @@ void RES0_init__(void) {
   WDT_CLOCK = __BOOL_LITERAL(FALSE);
   SUPERSTATE_MACHINE_init__(&SSM,retain);
   AUTOPRODUCTION_init__(&AP,retain);
+  FAILURE_init__(&FAIL,retain);
   WATCHDOGTIMER_init__(&WDTIMER,retain);
 }
 
@@ -44,6 +47,9 @@ void RES0_run__(unsigned long tick) {
   }
   if (TASK0) {
     AUTOPRODUCTION_body__(&AP);
+  }
+  if (TASK0) {
+    FAILURE_body__(&FAIL);
   }
   if (WDT_CLOCK) {
     WATCHDOGTIMER_body__(&WDTIMER);

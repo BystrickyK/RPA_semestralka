@@ -26,7 +26,7 @@ void __publish_debug (void){}
 #include <stdio.h>
 
 #ifndef TARGET_ONLINE_DEBUG_DISABLE
-#define BUFFER_SIZE 40
+#define BUFFER_SIZE 44
 
 /* Atomically accessed variable for buffer state */
 #define BUFFER_FREE 0
@@ -46,6 +46,7 @@ static unsigned int retain_offset = 0;
  **/
 extern SUPERSTATE_MACHINE RES0__SSM;
 extern AUTOPRODUCTION RES0__AP;
+extern FAILURE RES0__FAIL;
 extern WATCHDOGTIMER RES0__WDTIMER;
 
 /***
@@ -58,6 +59,7 @@ extern __IEC_WORD_t CONFIG0__SENSOR_OUTPUT;
 extern __IEC_WORD_t CONFIG0__SSM_TRANSITIONS;
 extern       SUPERSTATE_MACHINE   RES0__SSM;
 extern       AUTOPRODUCTION   RES0__AP;
+extern       FAILURE   RES0__FAIL;
 extern       WATCHDOGTIMER   RES0__WDTIMER;
 
 typedef const struct {
@@ -86,6 +88,8 @@ static dbgvardsc_t dbgvardsc[] = {
 {&(RES0__AP.SSM_TRANSITIONS), WORD_P_ENUM},
 {&(RES0__AP.CURRENT_STATE), INT_ENUM},
 {&(RES0__AP.COL), INT_ENUM},
+{&(RES0__FAIL.CURRENT_SUPERSTATE), INT_P_ENUM},
+{&(RES0__FAIL.SSM_TRANSITIONS), WORD_P_ENUM},
 {&(RES0__WDTIMER.WDT), UINT_P_ENUM}
 };
 

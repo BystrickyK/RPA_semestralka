@@ -210,7 +210,7 @@ void FAILURE_body__(FAILURE *data__) {
   // Initialise TEMP variables
 
   if ((__GET_EXTERNAL(data__->CURRENT_SUPERSTATE,) == 5)) {
-    __SET_EXTERNAL(data__->,SSM_TRANSITIONS,,(__GET_EXTERNAL(data__->SSM_TRANSITIONS,) ^ 256));
+    __SET_EXTERNAL(data__->,SSM_TRANSITIONS,,(__GET_EXTERNAL(data__->SSM_TRANSITIONS,) & ~(256)));
   };
 
   goto __end;
@@ -312,9 +312,6 @@ void AUTOPRODUCTION_body__(AUTOPRODUCTION *data__) {
   // Initialise TEMP variables
 
   if ((__GET_EXTERNAL(data__->CURRENT_SUPERSTATE,) == 1)) {
-    if ((__GET_EXTERNAL(data__->WDT,) > 6000)) {
-      __SET_EXTERNAL(data__->,SSM_TRANSITIONS,,(__GET_EXTERNAL(data__->SSM_TRANSITIONS,) | 256));
-    };
     for(__GET_VAR(data__->COL,) = 0; __GET_VAR(data__->COL,) <= 10; __GET_VAR(data__->COL,)++) {
       if ((__GET_VAR(data__->TRANSITION_MATRIX,.table[(__GET_VAR(data__->CURRENT_STATE,)) - (0)][(__GET_VAR(data__->COL,)) - (0)]) != -1)) {
         if (((__GET_EXTERNAL(data__->SENSOR_OUTPUT,) & __GET_VAR(data__->MASK,.table[(__GET_VAR(data__->COL,)) - (0)])) == __GET_VAR(data__->MASK,.table[(__GET_VAR(data__->COL,)) - (0)]))) {
@@ -324,6 +321,13 @@ void AUTOPRODUCTION_body__(AUTOPRODUCTION *data__) {
       };
     };
     __SET_EXTERNAL(data__->,CONTROLLER_OUTPUT,,__GET_VAR(data__->STATE_OUTPUT,.table[(__GET_VAR(data__->CURRENT_STATE,)) - (0)]));
+    if ((__GET_EXTERNAL(data__->WDT,) > 3000)) {
+      __SET_EXTERNAL(data__->,SSM_TRANSITIONS,,(__GET_EXTERNAL(data__->SSM_TRANSITIONS,) | 256));
+    };
+    if ((__GET_VAR(data__->CURRENT_STATE,) == 9)) {
+      __SET_EXTERNAL(data__->,SSM_TRANSITIONS,,(__GET_EXTERNAL(data__->SSM_TRANSITIONS,) | 4));
+      __SET_VAR(data__->,CURRENT_STATE,,0);
+    };
   };
 
   goto __end;

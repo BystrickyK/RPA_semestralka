@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <project xmlns:ns1="http://www.plcopen.org/xml/tc6_0201" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.plcopen.org/xml/tc6_0201">
   <fileHeader companyName="Unknown" productName="Unnamed" productVersion="1" creationDateTime="2020-04-12T15:34:46"/>
-  <contentHeader name="Unnamed" modificationDateTime="2020-04-27T21:21:55">
+  <contentHeader name="Unnamed" modificationDateTime="2020-04-28T19:52:45">
     <coordinateInfo>
       <fbd>
         <scaling x="10" y="10"/>
@@ -220,13 +220,7 @@ END_VAR
 (* permission *)
 IF current_superstate = 1 THEN
       
-      (* watchdog timer *)
-(* TODO : make watchdogtimer "overflow" value state dependent instead of fixed 1000
-        add an array with overflow values for each state *)                                                  
-      IF WDT > 6000 THEN
-        (* set failure symptome WDOx as true *)
-        ssm_transitions := ssm_transitions OR 256;
-      END_IF;
+     
       
       (* interstate transitions *)
       FOR col := 0 TO 10 DO
@@ -240,6 +234,20 @@ IF current_superstate = 1 THEN
       
       (* actuator signal *)
       controller_output := state_output[current_state];
+      
+       (* watchdog timer *)
+(* TODO : make watchdogtimer "overflow" value state dependent instead of fixed 1000
+        add an array with overflow values for each state *)                                                  
+      IF WDT > 3000 THEN
+        (* set failure symptome WDOx as true *)
+        ssm_transitions := ssm_transitions OR 256;
+      END_IF;
+      
+     (* final state reached *)                                              
+      IF current_state = 9 THEN
+        ssm_transitions := ssm_transitions OR 4;
+        current_state := 0;
+      END_IF;
       
 END_IF;]]></xhtml:p>
           </ST>
@@ -262,14 +270,14 @@ END_IF;]]></xhtml:p>
         </interface>
         <body>
           <ST>
-            <xhtml:p><![CDATA[(* permission *)
-IF current_superstate = 5 THEN
+            <xhtml:p><![CDATA[(* permission *)
+IF current_superstate = 5 THEN
   
       (* set failure symptome WDOx as false *)
-      ssm_transitions := ssm_transitions XOR 256;
-      
-      
-      
+      ssm_transitions := ssm_transitions AND NOT 256;
+      
+      
+      
 END_IF;]]></xhtml:p>
           </ST>
         </body>
@@ -299,6 +307,7 @@ END_IF;]]></xhtml:p>
           <task name="task0" priority="0" interval="T#100ms">
             <pouInstance name="SSM" typeName="superstate_machine"/>
             <pouInstance name="AP" typeName="autoproduction"/>
+            <pouInstance name="FAIL" typeName="failure"/>
           </task>
           <task name="WDT_clock" priority="0" interval="T#10ms">
             <pouInstance name="WDTimer" typeName="watchdogtimer"/>
