@@ -92,23 +92,6 @@ FUNCTION_BLOCK python_gear
 END_FUNCTION_BLOCK
 
 
-PROGRAM failure
-  VAR_EXTERNAL
-    current_superstate : INT;
-    ssm_transitions : WORD;
-  END_VAR
-
-  (* permission *)
-  IF current_superstate = 5 THEN
-    
-        (* set failure symptome WDOx as false *)
-        ssm_transitions := ssm_transitions AND NOT 256;
-        
-        
-        
-  END_IF;
-END_PROGRAM
-
 PROGRAM superstate_machine
   VAR_EXTERNAL
     ssm_transitions : WORD;
@@ -167,6 +150,71 @@ PROGRAM superstate_machine
 
 END_PROGRAM
 
+FUNCTION_BLOCK array_ALL_1
+  VAR
+    size : INT := 3;
+  END_VAR
+  VAR_INPUT
+    array1 : ARRAY [0..3] OF INT;
+  END_VAR
+  VAR_OUTPUT
+    output : BOOL;
+  END_VAR
+  VAR
+    help : BOOL := true;
+    index : INT;
+  END_VAR
+
+  FOR index := 0 TO size DO
+    IF (array1[index]<>1) THEN
+      help := false;
+      EXIT;
+    END_IF;
+  END_FOR;
+
+  output := help;
+END_FUNCTION_BLOCK
+
+FUNCTION_BLOCK array_EQUAL
+  VAR
+    size : INT;
+  END_VAR
+  VAR_INPUT
+    array1 : ARRAY [0..3] OF INT;
+    array2 : ARRAY [0..3] OF INT;
+  END_VAR
+  VAR_OUTPUT
+    output : BOOL := true;
+  END_VAR
+  VAR
+    index : INT;
+  END_VAR
+
+  FOR index := 0 TO size DO
+    IF (array1[index]<>array2[index]) THEN
+      output := false;
+      EXIT;
+    END_IF;
+  END_FOR;
+END_FUNCTION_BLOCK
+
+PROGRAM failure
+  VAR_EXTERNAL
+    current_superstate : INT;
+    ssm_transitions : WORD;
+  END_VAR
+
+  (* permission *)
+  IF current_superstate = 5 THEN
+    
+        (* set failure symptome WDOx as false *)
+        ssm_transitions := ssm_transitions AND NOT 256;
+        
+        
+        
+  END_IF;
+END_PROGRAM
+
 PROGRAM watchdogtimer
   VAR_EXTERNAL
     WDT : UINT;
@@ -201,6 +249,21 @@ PROGRAM autoproduction
          -1,    -1,     -1,     -1,      -1,     -1,     -1,      -1,      8,     -1, (* 107 *)
          -1,    -1,     -1,     -1,      -1,     -1,     -1,      -1,     -1,      9, (* 108 *)
          -1,    -1,     -1,     -1,      -1,     -1,     -1,      -1,     -1,     -1 (* 109 *)
+    ];
+  END_VAR
+
+  VAR
+    maskArray: ARRAY[0..10,0..9] OF INT := [
+    0,      0,      0,      0,      0,      0,      0,      0,      1, (*       prox 1*)
+    0,      1,      0,      0,      0,      0,      0,      0,      0, (*       a1 2*)
+    0,      0,      0,      1,      0,      0,      0,      0,      0, (*       b1 3*)
+    0,      0,      0,      0,      0,      1,      0,      0,      0, (*       c1 4*)
+    0,      0,      0,      0,      1,      0,      1,      0,      0, (*       c0d0 5*)
+    0,      0,      0,      0,      0,      0,      0,      1,      0, (*       d1 6*)
+    0,      0,      0,      0,      1,      0,      0,      1,      0, (*       c0d1 7*)
+    0,      0,      1,      0,      0,      0,      0,      0,      0, (*       b0 8*)
+    0,      0,      0,      0,      0,      0,      1,      0,      0, (*       d0 9*)
+    1,      0,      0,      0,      0,      0,      0,      0,      0 (*        a0 10*)
     ];
   END_VAR
 
@@ -272,6 +335,356 @@ PROGRAM autoproduction
   END_IF;
 END_PROGRAM
 
+FUNCTION_BLOCK array_AND
+  VAR
+    size : INT := 3;
+  END_VAR
+  VAR_INPUT
+    array1 : ARRAY [0..3] OF INT;
+    array2 : ARRAY [0..3] OF INT;
+  END_VAR
+  VAR_OUTPUT
+    output : ARRAY [0..3] OF INT;
+  END_VAR
+  VAR
+    index : INT := 0;
+    help : INT := 0;
+  END_VAR
+
+
+  FOR index := 0 TO size DO
+    help := array1[index] + array2[index];
+    
+    IF (help = 0) THEN
+      output[index]:= 0;
+    ELSIF (help = 1) THEN
+      output[index]:= 0;
+    ELSIF (help = 2) THEN
+      output[index] := 1;
+    ELSE
+      output[index] := 99; (* This should not happend *)
+    END_IF;
+    
+  END_FOR;
+END_FUNCTION_BLOCK
+
+FUNCTION_BLOCK array_XOR
+  VAR
+    size : INT := 3;
+  END_VAR
+  VAR_INPUT
+    array1 : ARRAY [0..3] OF INT;
+    array2 : ARRAY [0..3] OF INT;
+  END_VAR
+  VAR_OUTPUT
+    output : ARRAY [0..3] OF INT;
+  END_VAR
+  VAR
+    index : INT := 0;
+    help : INT := 0;
+  END_VAR
+
+
+  FOR index := 0 TO size DO
+    help := array1[index] + array2[index];
+    
+    IF (help = 0) THEN
+      output[index]:= 0;
+    ELSIF (help = 1) THEN
+      output[index]:= 1;
+    ELSE
+      output[index] := 0;
+    END_IF;
+    
+  END_FOR;
+END_FUNCTION_BLOCK
+
+FUNCTION_BLOCK array_MASK1
+  VAR
+    size : INT := 3;
+  END_VAR
+  VAR_INPUT
+    array1 : ARRAY [0..3] OF INT;
+  END_VAR
+  VAR_OUTPUT
+    output : ARRAY [0..3] OF INT;
+  END_VAR
+  VAR
+    index : INT := 0;
+    help : INT := 0;
+  END_VAR
+
+
+  FOR index := 0 TO size DO
+    help := array1[index];
+    
+    IF (help = -1) THEN
+      output[index]:= 0;
+    ELSE
+      output[index] := 1;
+    END_IF;
+    
+  END_FOR;
+END_FUNCTION_BLOCK
+
+FUNCTION_BLOCK array_MASK2
+  VAR
+    size : INT := 3;
+  END_VAR
+  VAR_INPUT
+    array1 : ARRAY [0..3] OF INT;
+  END_VAR
+  VAR_OUTPUT
+    output : ARRAY [0..3] OF INT;
+  END_VAR
+  VAR
+    index : INT := 0;
+    help : INT := 0;
+  END_VAR
+
+
+  FOR index := 0 TO size DO
+    help := array1[index];
+    
+    IF (help = 1) THEN
+      output[index] := 0;
+    ELSIF (help = 0) THEN
+      output[index] := 1;
+    ELSIF (help = -1) THEN
+      output[index] := 1;
+    ELSE
+      output[index] := 99; (* This sould not happned *)
+    END_IF;
+    
+    
+  END_FOR;
+END_FUNCTION_BLOCK
+
+FUNCTION_BLOCK array_NOT
+  VAR
+    size : INT := 3;
+  END_VAR
+  VAR_INPUT
+    array1 : ARRAY [0..3] OF INT;
+  END_VAR
+  VAR_OUTPUT
+    output : ARRAY [0..3] OF INT;
+  END_VAR
+  VAR
+    index : INT := 0;
+    help : INT := 0;
+  END_VAR
+
+
+  FOR index := 0 TO size DO
+    help := array1[index];
+    
+    IF (help = 0) THEN
+      output[index]:= 1;
+    ELSIF (help = 1) THEN
+      output[index] := 0;
+    ELSE
+      output[index] := 99; (* This should not happend *)
+    END_IF;
+    
+  END_FOR;
+END_FUNCTION_BLOCK
+
+FUNCTION_BLOCK array_mask
+  VAR_INPUT
+    mask : ARRAY [0..3] OF INT;
+    input : ARRAY [0..3] OF INT;
+  END_VAR
+  VAR
+    help : ARRAY [0..3] OF INT;
+    mask1 : ARRAY [0..3] OF INT;
+    mask2 : ARRAY [0..3] OF INT;
+  END_VAR
+  VAR_OUTPUT
+    output : BOOL;
+  END_VAR
+  VAR
+    array_mask1_instance : array_MASK1;
+    array_mask2_instance : array_MASK2;
+    array_and_instance : array_AND;
+    array_xor_instance : array_XOR;
+    array_all_1_instance : array_ALL_1;
+  END_VAR
+
+  (* algorithm for mask*)
+  array_xor_instance(array1 := mask, output => mask1);
+
+  array_mask2_instance(array1 := mask, output => mask2);
+
+  array_and_instance(array1 := input, array2 := mask1, output => help);
+
+  array_xor_instance(array1 := help, array2 := mask2, output => help);
+
+  array_all_1_instance(array1 := help, output => output);
+END_FUNCTION_BLOCK
+
+FUNCTION_BLOCK get_mask
+  VAR CONSTANT
+    size : INT := 3;
+  END_VAR
+  VAR_INPUT
+    masks : ARRAY [0..3,0..3] OF INT;
+    maskIndex : INT;
+  END_VAR
+  VAR_OUTPUT
+    mask : ARRAY [0..3] OF INT;
+  END_VAR
+  VAR
+    index : INT;
+  END_VAR
+
+  FOR index := 0 TO size DO
+    mask[index] := masks[maskIndex,index];
+  END_FOR;
+END_FUNCTION_BLOCK
+
+PROGRAM test
+  VAR
+    mask : ARRAY [0..3] OF INT := [-1, 0, 1, 1];
+    masks : ARRAY [0..3,0..3] OF INT := [-1, 0, 1, 1, -1, -1, -1, -1, 1, 1, 1, 1, 1, 0, -1, -1];
+    mask1 : ARRAY [0..3] OF INT;
+    mask2 : ARRAY [0..3] OF INT;
+    help1 : ARRAY [0..3] OF INT;
+    help2 : ARRAY [0..3] OF INT;
+    input : ARRAY [0..3] OF INT := [1, 0, 1, 1];
+    v1 : ARRAY [0..3] OF INT := [1, 1, 0, 0];
+    v2 : ARRAY [0..3] OF INT := [0, 1, 1, 0];
+    v3 : ARRAY [0..3] OF INT;
+    v3_0 : INT;
+    v3_1 : INT;
+    v3_2 : INT;
+    v3_3 : INT;
+    mask1_0 : INT;
+    mask1_1 : INT;
+    mask1_2 : INT;
+    mask1_3 : INT;
+    mask2_0 : INT;
+    mask2_1 : INT;
+    mask2_2 : INT;
+    mask2_3 : INT;
+    help1_0 : INT;
+    help1_1 : INT;
+    help1_2 : INT;
+    help1_3 : INT;
+    same : BOOL;
+    array_and_instance : array_AND;
+    array_xor_instance : array_XOR;
+    array_equal_instance : array_EQUAL;
+    array_mask1_instance : array_MASK1;
+    array_mask2_instance : array_MASK2;
+    array_not_instance : array_NOT;
+    array_all_1_instance : array_ALL_1;
+    array_mask_instance : array_mask;
+    get_mask_instance : get_mask;
+  END_VAR
+
+
+
+  (* Test of individual function blocks 
+
+  array_and_instance(array1 := v1, array2 := v2, output => v3);
+
+  array_xor_instance(array1 := v1, array2 := v2, output => v3);
+
+  array_equal_instance(array1 := v1, array2 := v1, output => same);
+
+  array_mask1_instance(array1 := mask, output => mask1);
+
+  array_mask2_instance(array1 := mask, output => mask2);
+
+  array_not_instance(array1 := mask, output => v3);
+  *)
+
+  (* algorithm for mask
+  array_mask1_instance(array1 := mask, output => mask1);
+
+  array_mask2_instance(array1 := mask, output => mask2);
+
+  array_and_instance(array1 := input, array2 := mask1, output => help1);
+
+  array_xor_instance(array1 := help1, array2 := mask2, output => help1);
+
+  array_all_1_instance(array1 := help1, output => same);
+  *)
+
+
+  get_mask_instance(masks := masks, maskIndex := 3, mask => mask);
+  array_mask_instance(mask := mask, input := input, output => same);
+
+
+
+
+
+
+  (* Just to view the values *)
+  v3_0 := v3[0];
+  v3_1 := v3[1];
+  v3_2 := v3[2];
+  v3_3 := v3[3];
+
+  (* Just to view the values 
+  mask1_0 := mask1[0];
+  mask1_1 := mask1[1];
+  mask1_2 := mask1[2];
+  mask1_3 := mask1[3];
+  *)
+
+  (* Just to view the values 
+  mask2_0 := mask2[0];
+  mask2_1 := mask2[1];
+  mask2_2 := mask2[2];
+  mask2_3 := mask2[3];
+  *)
+
+  (* Just to view the values 
+  help1_0 := help1[0];
+  help1_1 := help1[1];
+  help1_2 := help1[2];
+  help1_3 := help1[3];
+  *)
+
+  (* Test of function
+  v3_3 := test_function(MyConstant := 10);
+  *)
+END_PROGRAM
+
+FUNCTION test_function : INT
+  VAR_INPUT
+    MyConstant : INT;
+  END_VAR
+
+  test_function := MyConstant;
+END_FUNCTION
+
+FUNCTION array_EQUAL_function : BOOL
+  VAR
+    size : INT;
+  END_VAR
+  VAR_INPUT
+    array1 : ARRAY [0..3] OF INT;
+    array2 : ARRAY [0..3] OF INT;
+  END_VAR
+  VAR
+    help : BOOL := true;
+    index : INT;
+  END_VAR
+
+  FOR index := 0 TO size DO
+    IF (array1[index]=array2[index]) THEN
+        help := true;
+    ELSE
+      help := false;
+    END_IF;
+  END_FOR;
+
+  array_EQUAL_function := true;
+END_FUNCTION
+
 
 CONFIGURATION Config0
   VAR_GLOBAL
@@ -289,5 +702,6 @@ CONFIGURATION Config0
     PROGRAM AP WITH task0 : autoproduction;
     PROGRAM FAIL WITH task0 : failure;
     PROGRAM WDTimer WITH WDT_clock : watchdogtimer;
+    PROGRAM TST : test;
   END_RESOURCE
 END_CONFIGURATION

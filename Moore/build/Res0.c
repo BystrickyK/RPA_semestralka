@@ -26,6 +26,8 @@ FAILURE RES0__FAIL;
 #define FAIL RES0__FAIL
 WATCHDOGTIMER RES0__WDTIMER;
 #define WDTIMER RES0__WDTIMER
+TEST RES0__TST;
+#define TST RES0__TST
 
 void RES0_init__(void) {
   BOOL retain;
@@ -37,6 +39,7 @@ void RES0_init__(void) {
   AUTOPRODUCTION_init__(&AP,retain);
   FAILURE_init__(&FAIL,retain);
   WATCHDOGTIMER_init__(&WDTIMER,retain);
+  TEST_init__(&TST,retain);
 }
 
 void RES0_run__(unsigned long tick) {
@@ -54,5 +57,6 @@ void RES0_run__(unsigned long tick) {
   if (WDT_CLOCK) {
     WATCHDOGTIMER_body__(&WDTIMER);
   }
+  TEST_body__(&TST);
 }
 

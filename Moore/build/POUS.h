@@ -100,20 +100,6 @@ typedef struct {
 void PYTHON_GEAR_init__(PYTHON_GEAR *data__, BOOL retain);
 // Code part
 void PYTHON_GEAR_body__(PYTHON_GEAR *data__);
-// PROGRAM FAILURE
-// Data part
-typedef struct {
-  // PROGRAM Interface - IN, OUT, IN_OUT variables
-
-  // PROGRAM private variables - TEMP, private and located variables
-  __DECLARE_EXTERNAL(INT,CURRENT_SUPERSTATE)
-  __DECLARE_EXTERNAL(WORD,SSM_TRANSITIONS)
-
-} FAILURE;
-
-void FAILURE_init__(FAILURE *data__, BOOL retain);
-// Code part
-void FAILURE_body__(FAILURE *data__);
 __DECLARE_ARRAY_TYPE(__ARRAY_OF_INT_6_11,INT,[6][11])
 __DECLARE_ARRAY_TYPE(__ARRAY_OF_WORD_11,WORD,[11])
 // PROGRAM SUPERSTATE_MACHINE
@@ -138,6 +124,59 @@ typedef struct {
 void SUPERSTATE_MACHINE_init__(SUPERSTATE_MACHINE *data__, BOOL retain);
 // Code part
 void SUPERSTATE_MACHINE_body__(SUPERSTATE_MACHINE *data__);
+__DECLARE_ARRAY_TYPE(__ARRAY_OF_INT_4,INT,[4])
+// FUNCTION_BLOCK ARRAY_ALL_1
+// Data part
+typedef struct {
+  // FB Interface - IN, OUT, IN_OUT variables
+  __DECLARE_VAR(BOOL,EN)
+  __DECLARE_VAR(BOOL,ENO)
+  __DECLARE_VAR(__ARRAY_OF_INT_4,ARRAY1)
+  __DECLARE_VAR(BOOL,OUTPUT)
+
+  // FB private variables - TEMP, private and located variables
+  __DECLARE_VAR(INT,SIZE)
+  __DECLARE_VAR(BOOL,HELP)
+  __DECLARE_VAR(INT,INDEX)
+
+} ARRAY_ALL_1;
+
+void ARRAY_ALL_1_init__(ARRAY_ALL_1 *data__, BOOL retain);
+// Code part
+void ARRAY_ALL_1_body__(ARRAY_ALL_1 *data__);
+// FUNCTION_BLOCK ARRAY_EQUAL
+// Data part
+typedef struct {
+  // FB Interface - IN, OUT, IN_OUT variables
+  __DECLARE_VAR(BOOL,EN)
+  __DECLARE_VAR(BOOL,ENO)
+  __DECLARE_VAR(__ARRAY_OF_INT_4,ARRAY1)
+  __DECLARE_VAR(__ARRAY_OF_INT_4,ARRAY2)
+  __DECLARE_VAR(BOOL,OUTPUT)
+
+  // FB private variables - TEMP, private and located variables
+  __DECLARE_VAR(INT,SIZE)
+  __DECLARE_VAR(INT,INDEX)
+
+} ARRAY_EQUAL;
+
+void ARRAY_EQUAL_init__(ARRAY_EQUAL *data__, BOOL retain);
+// Code part
+void ARRAY_EQUAL_body__(ARRAY_EQUAL *data__);
+// PROGRAM FAILURE
+// Data part
+typedef struct {
+  // PROGRAM Interface - IN, OUT, IN_OUT variables
+
+  // PROGRAM private variables - TEMP, private and located variables
+  __DECLARE_EXTERNAL(INT,CURRENT_SUPERSTATE)
+  __DECLARE_EXTERNAL(WORD,SSM_TRANSITIONS)
+
+} FAILURE;
+
+void FAILURE_init__(FAILURE *data__, BOOL retain);
+// Code part
+void FAILURE_body__(FAILURE *data__);
 // PROGRAM WATCHDOGTIMER
 // Data part
 typedef struct {
@@ -152,6 +191,7 @@ void WATCHDOGTIMER_init__(WATCHDOGTIMER *data__, BOOL retain);
 // Code part
 void WATCHDOGTIMER_body__(WATCHDOGTIMER *data__);
 __DECLARE_ARRAY_TYPE(__ARRAY_OF_INT_10_10,INT,[10][10])
+__DECLARE_ARRAY_TYPE(__ARRAY_OF_INT_11_10,INT,[11][10])
 __DECLARE_ARRAY_TYPE(__ARRAY_OF_BYTE_12,BYTE,[12])
 // PROGRAM AUTOPRODUCTION
 // Data part
@@ -167,6 +207,7 @@ typedef struct {
   __DECLARE_VAR(INT,CURRENT_STATE)
   __DECLARE_VAR(INT,COL)
   __DECLARE_VAR(__ARRAY_OF_INT_10_10,TRANSITION_MATRIX)
+  __DECLARE_VAR(__ARRAY_OF_INT_11_10,MASKARRAY)
   __DECLARE_VAR(__ARRAY_OF_WORD_11,MASK)
   __DECLARE_VAR(__ARRAY_OF_BYTE_12,STATE_OUTPUT)
 
@@ -175,4 +216,205 @@ typedef struct {
 void AUTOPRODUCTION_init__(AUTOPRODUCTION *data__, BOOL retain);
 // Code part
 void AUTOPRODUCTION_body__(AUTOPRODUCTION *data__);
+// FUNCTION_BLOCK ARRAY_AND
+// Data part
+typedef struct {
+  // FB Interface - IN, OUT, IN_OUT variables
+  __DECLARE_VAR(BOOL,EN)
+  __DECLARE_VAR(BOOL,ENO)
+  __DECLARE_VAR(__ARRAY_OF_INT_4,ARRAY1)
+  __DECLARE_VAR(__ARRAY_OF_INT_4,ARRAY2)
+  __DECLARE_VAR(__ARRAY_OF_INT_4,OUTPUT)
+
+  // FB private variables - TEMP, private and located variables
+  __DECLARE_VAR(INT,SIZE)
+  __DECLARE_VAR(INT,INDEX)
+  __DECLARE_VAR(INT,HELP)
+
+} ARRAY_AND;
+
+void ARRAY_AND_init__(ARRAY_AND *data__, BOOL retain);
+// Code part
+void ARRAY_AND_body__(ARRAY_AND *data__);
+// FUNCTION_BLOCK ARRAY_XOR
+// Data part
+typedef struct {
+  // FB Interface - IN, OUT, IN_OUT variables
+  __DECLARE_VAR(BOOL,EN)
+  __DECLARE_VAR(BOOL,ENO)
+  __DECLARE_VAR(__ARRAY_OF_INT_4,ARRAY1)
+  __DECLARE_VAR(__ARRAY_OF_INT_4,ARRAY2)
+  __DECLARE_VAR(__ARRAY_OF_INT_4,OUTPUT)
+
+  // FB private variables - TEMP, private and located variables
+  __DECLARE_VAR(INT,SIZE)
+  __DECLARE_VAR(INT,INDEX)
+  __DECLARE_VAR(INT,HELP)
+
+} ARRAY_XOR;
+
+void ARRAY_XOR_init__(ARRAY_XOR *data__, BOOL retain);
+// Code part
+void ARRAY_XOR_body__(ARRAY_XOR *data__);
+// FUNCTION_BLOCK ARRAY_MASK1
+// Data part
+typedef struct {
+  // FB Interface - IN, OUT, IN_OUT variables
+  __DECLARE_VAR(BOOL,EN)
+  __DECLARE_VAR(BOOL,ENO)
+  __DECLARE_VAR(__ARRAY_OF_INT_4,ARRAY1)
+  __DECLARE_VAR(__ARRAY_OF_INT_4,OUTPUT)
+
+  // FB private variables - TEMP, private and located variables
+  __DECLARE_VAR(INT,SIZE)
+  __DECLARE_VAR(INT,INDEX)
+  __DECLARE_VAR(INT,HELP)
+
+} ARRAY_MASK1;
+
+void ARRAY_MASK1_init__(ARRAY_MASK1 *data__, BOOL retain);
+// Code part
+void ARRAY_MASK1_body__(ARRAY_MASK1 *data__);
+// FUNCTION_BLOCK ARRAY_MASK2
+// Data part
+typedef struct {
+  // FB Interface - IN, OUT, IN_OUT variables
+  __DECLARE_VAR(BOOL,EN)
+  __DECLARE_VAR(BOOL,ENO)
+  __DECLARE_VAR(__ARRAY_OF_INT_4,ARRAY1)
+  __DECLARE_VAR(__ARRAY_OF_INT_4,OUTPUT)
+
+  // FB private variables - TEMP, private and located variables
+  __DECLARE_VAR(INT,SIZE)
+  __DECLARE_VAR(INT,INDEX)
+  __DECLARE_VAR(INT,HELP)
+
+} ARRAY_MASK2;
+
+void ARRAY_MASK2_init__(ARRAY_MASK2 *data__, BOOL retain);
+// Code part
+void ARRAY_MASK2_body__(ARRAY_MASK2 *data__);
+// FUNCTION_BLOCK ARRAY_NOT
+// Data part
+typedef struct {
+  // FB Interface - IN, OUT, IN_OUT variables
+  __DECLARE_VAR(BOOL,EN)
+  __DECLARE_VAR(BOOL,ENO)
+  __DECLARE_VAR(__ARRAY_OF_INT_4,ARRAY1)
+  __DECLARE_VAR(__ARRAY_OF_INT_4,OUTPUT)
+
+  // FB private variables - TEMP, private and located variables
+  __DECLARE_VAR(INT,SIZE)
+  __DECLARE_VAR(INT,INDEX)
+  __DECLARE_VAR(INT,HELP)
+
+} ARRAY_NOT;
+
+void ARRAY_NOT_init__(ARRAY_NOT *data__, BOOL retain);
+// Code part
+void ARRAY_NOT_body__(ARRAY_NOT *data__);
+// FUNCTION_BLOCK ARRAY_MASK
+// Data part
+typedef struct {
+  // FB Interface - IN, OUT, IN_OUT variables
+  __DECLARE_VAR(BOOL,EN)
+  __DECLARE_VAR(BOOL,ENO)
+  __DECLARE_VAR(__ARRAY_OF_INT_4,MASK)
+  __DECLARE_VAR(__ARRAY_OF_INT_4,INPUT)
+  __DECLARE_VAR(BOOL,OUTPUT)
+
+  // FB private variables - TEMP, private and located variables
+  __DECLARE_VAR(__ARRAY_OF_INT_4,HELP)
+  __DECLARE_VAR(__ARRAY_OF_INT_4,MASK1)
+  __DECLARE_VAR(__ARRAY_OF_INT_4,MASK2)
+  ARRAY_MASK1 ARRAY_MASK1_INSTANCE;
+  ARRAY_MASK2 ARRAY_MASK2_INSTANCE;
+  ARRAY_AND ARRAY_AND_INSTANCE;
+  ARRAY_XOR ARRAY_XOR_INSTANCE;
+  ARRAY_ALL_1 ARRAY_ALL_1_INSTANCE;
+
+} ARRAY_MASK;
+
+void ARRAY_MASK_init__(ARRAY_MASK *data__, BOOL retain);
+// Code part
+void ARRAY_MASK_body__(ARRAY_MASK *data__);
+__DECLARE_ARRAY_TYPE(__ARRAY_OF_INT_4_4,INT,[4][4])
+// FUNCTION_BLOCK GET_MASK
+// Data part
+typedef struct {
+  // FB Interface - IN, OUT, IN_OUT variables
+  __DECLARE_VAR(BOOL,EN)
+  __DECLARE_VAR(BOOL,ENO)
+  __DECLARE_VAR(__ARRAY_OF_INT_4_4,MASKS)
+  __DECLARE_VAR(INT,MASKINDEX)
+  __DECLARE_VAR(__ARRAY_OF_INT_4,MASK)
+
+  // FB private variables - TEMP, private and located variables
+  __DECLARE_VAR(INT,SIZE)
+  __DECLARE_VAR(INT,INDEX)
+
+} GET_MASK;
+
+void GET_MASK_init__(GET_MASK *data__, BOOL retain);
+// Code part
+void GET_MASK_body__(GET_MASK *data__);
+// PROGRAM TEST
+// Data part
+typedef struct {
+  // PROGRAM Interface - IN, OUT, IN_OUT variables
+
+  // PROGRAM private variables - TEMP, private and located variables
+  __DECLARE_VAR(__ARRAY_OF_INT_4,MASK)
+  __DECLARE_VAR(__ARRAY_OF_INT_4_4,MASKS)
+  __DECLARE_VAR(__ARRAY_OF_INT_4,MASK1)
+  __DECLARE_VAR(__ARRAY_OF_INT_4,MASK2)
+  __DECLARE_VAR(__ARRAY_OF_INT_4,HELP1)
+  __DECLARE_VAR(__ARRAY_OF_INT_4,HELP2)
+  __DECLARE_VAR(__ARRAY_OF_INT_4,INPUT)
+  __DECLARE_VAR(__ARRAY_OF_INT_4,V1)
+  __DECLARE_VAR(__ARRAY_OF_INT_4,V2)
+  __DECLARE_VAR(__ARRAY_OF_INT_4,V3)
+  __DECLARE_VAR(INT,V3_0)
+  __DECLARE_VAR(INT,V3_1)
+  __DECLARE_VAR(INT,V3_2)
+  __DECLARE_VAR(INT,V3_3)
+  __DECLARE_VAR(INT,MASK1_0)
+  __DECLARE_VAR(INT,MASK1_1)
+  __DECLARE_VAR(INT,MASK1_2)
+  __DECLARE_VAR(INT,MASK1_3)
+  __DECLARE_VAR(INT,MASK2_0)
+  __DECLARE_VAR(INT,MASK2_1)
+  __DECLARE_VAR(INT,MASK2_2)
+  __DECLARE_VAR(INT,MASK2_3)
+  __DECLARE_VAR(INT,HELP1_0)
+  __DECLARE_VAR(INT,HELP1_1)
+  __DECLARE_VAR(INT,HELP1_2)
+  __DECLARE_VAR(INT,HELP1_3)
+  __DECLARE_VAR(BOOL,SAME)
+  ARRAY_AND ARRAY_AND_INSTANCE;
+  ARRAY_XOR ARRAY_XOR_INSTANCE;
+  ARRAY_EQUAL ARRAY_EQUAL_INSTANCE;
+  ARRAY_MASK1 ARRAY_MASK1_INSTANCE;
+  ARRAY_MASK2 ARRAY_MASK2_INSTANCE;
+  ARRAY_NOT ARRAY_NOT_INSTANCE;
+  ARRAY_ALL_1 ARRAY_ALL_1_INSTANCE;
+  ARRAY_MASK ARRAY_MASK_INSTANCE;
+  GET_MASK GET_MASK_INSTANCE;
+
+} TEST;
+
+void TEST_init__(TEST *data__, BOOL retain);
+// Code part
+void TEST_body__(TEST *data__);
+// FUNCTION
+INT TEST_FUNCTION(
+  BOOL EN, 
+  BOOL *__ENO, 
+  INT MYCONSTANT);
+// FUNCTION
+BOOL ARRAY_EQUAL_FUNCTION(
+  BOOL EN, 
+  BOOL *__ENO, 
+  __ARRAY_OF_INT_4 ARRAY1, 
+  __ARRAY_OF_INT_4 ARRAY2);
 #endif //__POUS_H
