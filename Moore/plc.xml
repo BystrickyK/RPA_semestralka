@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <project xmlns:ns1="http://www.plcopen.org/xml/tc6_0201" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.plcopen.org/xml/tc6_0201">
   <fileHeader companyName="Unknown" productName="Unnamed" productVersion="1" creationDateTime="2020-04-12T15:34:46"/>
-  <contentHeader name="Unnamed" modificationDateTime="2020-05-02T15:16:44">
+  <contentHeader name="Unnamed" modificationDateTime="2020-05-02T16:45:39">
     <coordinateInfo>
       <fbd>
         <scaling x="10" y="10"/>
@@ -28,7 +28,7 @@
                 <INT/>
               </type>
               <initialValue>
-                <simpleValue value="3"/>
+                <simpleValue value="8"/>
               </initialValue>
             </variable>
           </localVars>
@@ -36,7 +36,7 @@
             <variable name="array1">
               <type>
                 <array>
-                  <dimension lower="0" upper="3"/>
+                  <dimension lower="0" upper="8"/>
                   <baseType>
                     <INT/>
                   </baseType>
@@ -85,13 +85,13 @@ output := help;]]></xhtml:p>
           <returnType>
             <BOOL/>
           </returnType>
-          <localVars>
+          <localVars constant="true">
             <variable name="size">
               <type>
                 <INT/>
               </type>
               <initialValue>
-                <simpleValue value="3"/>
+                <simpleValue value="8"/>
               </initialValue>
             </variable>
           </localVars>
@@ -99,7 +99,7 @@ output := help;]]></xhtml:p>
             <variable name="array1">
               <type>
                 <array>
-                  <dimension lower="0" upper="3"/>
+                  <dimension lower="0" upper="8"/>
                   <baseType>
                     <INT/>
                   </baseType>
@@ -111,7 +111,7 @@ output := help;]]></xhtml:p>
             <variable name="output">
               <type>
                 <array>
-                  <dimension lower="0" upper="3"/>
+                  <dimension lower="0" upper="8"/>
                   <baseType>
                     <INT/>
                   </baseType>
@@ -246,7 +246,7 @@ END_FOR;]]></xhtml:p>
                 <INT/>
               </type>
               <initialValue>
-                <simpleValue value="3"/>
+                <simpleValue value="8"/>
               </initialValue>
             </variable>
           </localVars>
@@ -254,7 +254,7 @@ END_FOR;]]></xhtml:p>
             <variable name="array1">
               <type>
                 <array>
-                  <dimension lower="0" upper="3"/>
+                  <dimension lower="0" upper="8"/>
                   <baseType>
                     <INT/>
                   </baseType>
@@ -266,7 +266,7 @@ END_FOR;]]></xhtml:p>
             <variable name="output">
               <type>
                 <array>
-                  <dimension lower="0" upper="3"/>
+                  <dimension lower="0" upper="8"/>
                   <baseType>
                     <INT/>
                   </baseType>
@@ -441,13 +441,13 @@ array_EQUAL_function := true;]]></xhtml:p>
           <returnType>
             <BOOL/>
           </returnType>
-          <localVars>
+          <localVars constant="true">
             <variable name="size">
               <type>
                 <INT/>
               </type>
               <initialValue>
-                <simpleValue value="3"/>
+                <simpleValue value="8"/>
               </initialValue>
             </variable>
           </localVars>
@@ -455,7 +455,7 @@ array_EQUAL_function := true;]]></xhtml:p>
             <variable name="array1">
               <type>
                 <array>
-                  <dimension lower="0" upper="3"/>
+                  <dimension lower="0" upper="8"/>
                   <baseType>
                     <INT/>
                   </baseType>
@@ -465,7 +465,7 @@ array_EQUAL_function := true;]]></xhtml:p>
             <variable name="array2">
               <type>
                 <array>
-                  <dimension lower="0" upper="3"/>
+                  <dimension lower="0" upper="8"/>
                   <baseType>
                     <INT/>
                   </baseType>
@@ -477,7 +477,7 @@ array_EQUAL_function := true;]]></xhtml:p>
             <variable name="output">
               <type>
                 <array>
-                  <dimension lower="0" upper="3"/>
+                  <dimension lower="0" upper="8"/>
                   <baseType>
                     <INT/>
                   </baseType>
@@ -669,13 +669,120 @@ END_FOR;
                 <INT/>
               </type>
             </variable>
+            <variable name="get_mask_instance">
+              <type>
+                <derived name="get_mask"/>
+              </type>
+            </variable>
+            <variable name="mask_instance">
+              <type>
+                <derived name="array_mask"/>
+              </type>
+            </variable>
+            <variable name="mask">
+              <type>
+                <array>
+                  <dimension lower="0" upper="8"/>
+                  <baseType>
+                    <INT/>
+                  </baseType>
+                </array>
+              </type>
+            </variable>
+            <variable name="isSameAsMask">
+              <type>
+                <BOOL/>
+              </type>
+            </variable>
+            <variable name="a0">
+              <type>
+                <INT/>
+              </type>
+              <initialValue>
+                <simpleValue value="0"/>
+              </initialValue>
+            </variable>
+            <variable name="a1">
+              <type>
+                <INT/>
+              </type>
+              <initialValue>
+                <simpleValue value="0"/>
+              </initialValue>
+            </variable>
+            <variable name="b0">
+              <type>
+                <INT/>
+              </type>
+              <initialValue>
+                <simpleValue value="0"/>
+              </initialValue>
+            </variable>
+            <variable name="b1">
+              <type>
+                <INT/>
+              </type>
+              <initialValue>
+                <simpleValue value="0"/>
+              </initialValue>
+            </variable>
+            <variable name="c0">
+              <type>
+                <INT/>
+              </type>
+              <initialValue>
+                <simpleValue value="0"/>
+              </initialValue>
+            </variable>
+            <variable name="c1">
+              <type>
+                <INT/>
+              </type>
+              <initialValue>
+                <simpleValue value="0"/>
+              </initialValue>
+            </variable>
+            <variable name="d0">
+              <type>
+                <INT/>
+              </type>
+              <initialValue>
+                <simpleValue value="0"/>
+              </initialValue>
+            </variable>
+            <variable name="d1">
+              <type>
+                <INT/>
+              </type>
+              <initialValue>
+                <simpleValue value="0"/>
+              </initialValue>
+            </variable>
+            <variable name="prox">
+              <type>
+                <INT/>
+              </type>
+              <initialValue>
+                <simpleValue value="0"/>
+              </initialValue>
+            </variable>
+            <variable name="input">
+              <type>
+                <array>
+                  <dimension lower="0" upper="8"/>
+                  <baseType>
+                    <INT/>
+                  </baseType>
+                </array>
+              </type>
+            </variable>
           </localVars>
         </interface>
         <body>
           <ST>
             <xhtml:p><![CDATA[VAR
 transition_matrix: ARRAY[0..9,0..9] OF INT := [
-(*     prox  a1      b1      c1      c0d0    d1      c0d1      b0      d0      a0 *)
+(*     prox  a1      b0      c0      c0d0    d1      c0d1      b0      d0      a0 *)
         1,    -1,     -1,     -1,      -1,     -1,     -1,      -1,     -1,     -1, (* START - 100 *)
        -1,     2,     -1,     -1,      -1,     -1,     -1,      -1,     -1,     -1, (* 101 *)
        -1,    -1,      3,     -1,      -1,     -1,     -1,      -1,     -1,     -1, (* 102 *)
@@ -689,27 +796,32 @@ transition_matrix: ARRAY[0..9,0..9] OF INT := [
   ];
 END_VAR
 
+
+
+
+
+
 VAR
-  maskArray: ARRAY[0..10,0..9] OF INT := [
-  0,      0,      0,      0,      0,      0,      0,      0,      1, (*       prox 1*)
-  0,      1,      0,      0,      0,      0,      0,      0,      0, (*       a1 2*)
-  0,      0,      0,      1,      0,      0,      0,      0,      0, (*       b1 3*)
-  0,      0,      0,      0,      0,      1,      0,      0,      0, (*       c1 4*)
-  0,      0,      0,      0,      1,      0,      1,      0,      0, (*       c0d0 5*)
-  0,      0,      0,      0,      0,      0,      0,      1,      0, (*       d1 6*)
-  0,      0,      0,      0,      1,      0,      0,      1,      0, (*       c0d1 7*)
-  0,      0,      1,      0,      0,      0,      0,      0,      0, (*       b0 8*)
-  0,      0,      0,      0,      0,      0,      1,      0,      0, (*       d0 9*)
-  1,      0,      0,      0,      0,      0,      0,      0,      0 (*        a0 10*)
+  maskArray: ARRAY[0..9,0..8] OF INT := [
+  -1,      -1,      -1,      -1,      -1,      -1,      -1,      -1,       1, (*       prox 1*)
+  -1,       1,      -1,      -1,      -1,      -1,      -1,      -1,      -1, (*       a1 2*)
+  -1,      -1,      -1,       1,      -1,      -1,      -1,      -1,      -1, (*       b0 3*)
+  -1,      -1,      -1,      -1,      -1,       1,      -1,      -1,      -1, (*       c0 4*)
+  -1,      -1,      -1,      -1,       1,      -1,       1,      -1,      -1, (*       c0d0 5*)
+  -1,      -1,      -1,      -1,      -1,      -1,      -1,       1,      -1, (*       d1 6*)
+  -1,      -1,      -1,      -1,       1,      -1,      -1,       1,      -1, (*       c0d1 7*)
+  -1,      -1,       1,      -1,      -1,      -1,      -1,      -1,      -1, (*       b0 8*)
+  -1,      -1,      -1,      -1,      -1,      -1,       1,      -1,      -1, (*       d0 9*)
+   1,      -1,      -1,      -1,      -1,      -1,      -1,      -1,      -1 (*        a0 10*)
   ];
 END_VAR
 
 VAR
-mask: ARRAY[0..10] OF WORD  := [ (* 0 0 0 0 0 0 emg a0 a1 b0 b1 c0 c1 d0 d1 prox *)
+maskOriginal: ARRAY[0..10] OF WORD  := [ (* 0 0 0 0 0 0 emg a0 a1 b0 b0 c0 c0 d0 d1 prox *)
   2#0000000_000000001, (*       prox 1*)
   2#0000000_010000000, (*       a1 2*)
-  2#0000000_000100000, (*       b1 3*)
-  2#0000000_000001000, (*       c1 4*)
+  2#0000000_000100000, (*       b0 3*)
+  2#0000000_000001000, (*       c0 4*)
   2#0000000_000010100, (*       c0d0 5*)
   2#0000000_000000010, (*       d1 6*)
   2#0000000_000010010, (*       c0d1 7*)
@@ -726,16 +838,23 @@ state_output: ARRAY[0..11] OF BYTE  := [
   2#00000000, (* init - wait                                       0 0 *)
   2#10000000, (* prox -> 1 - set A+                                128 1*)
   2#00100000, (* a0 -> 0, a1 -> 1 - set B, reset A+ (bistable)     32 2*)
-  2#00110000, (* b0 -> 0, b1 -> 1 - set C                          48 3*)
-  2#00100000, (* c0 -> 0, c1 -> 1 - reset C                        32 4*)
-  2#00101000, (* c0 -> 1, c1 -> 0 - set D+                         40 5*)
-  2#00000000, (* c0 -> 1, c1 -> 0 - reset B                        0 6*)
-  2#00000100, (* b0 -> 1, b1 -> 0 - set D-                         8 7*)
+  2#00110000, (* b0 -> 0, b0 -> 1 - set C                          48 3*)
+  2#00100000, (* c0 -> 0, c0 -> 1 - reset C                        32 4*)
+  2#00101000, (* c0 -> 1, c0 -> 0 - set D+                         40 5*)
+  2#00000000, (* c0 -> 1, c0 -> 0 - reset B                        0 6*)
+  2#00000100, (* b0 -> 1, b0 -> 0 - set D-                         8 7*)
   2#01000000, (* d0 -> 1, d1 -> 0 - reset D-, set A-               64 8*)
   2#00000000 (*  a0 -> 1, a1 -> 0 - reset A-                       0 9*)
   (* back to init state *)
   ];
 END_VAR
+
+
+
+
+
+
+
 
 (* permission *)
 IF current_superstate = 1 THEN
@@ -744,21 +863,44 @@ IF current_superstate = 1 THEN
       
       (* interstate transitions *)
       FOR col := 0 TO 10 DO
+        
+        (* fills input of sensors *)
+        input[0] := a0;
+        input[1] := a1;
+        input[2] := b0;
+        input[3] := b1;
+        input[4] := c0;
+        input[5] := c1;
+        input[6] := d0;
+        input[7] := d1;
+        input[8] := prox;
+        
         IF (transition_matrix[current_state,col] <> -1) THEN
-          IF (sensor_output AND mask[col]) = mask[col] THEN
+          
+          get_mask_instance(masks := maskArray, maskIndex := col, mask => mask);
+          
+          mask_instance(mask := mask, input := input, output =>isSameAsMask);
+          IF isSameAsMask THEN
             current_state :=  transition_matrix[current_state,col];
-            WDT := 0; (*RESET watchdogtimer*)
+            WDT := 0; 
           END_IF;
         END_IF;
       END_FOR;
+      
+      
+      
+      
+      
+      
+      
       
       (* actuator signal *)
       controller_output := state_output[current_state];
       
        (* watchdog timer *)
-(* TODO : make watchdogtimer "overflow" value state dependent instead of fixed 1000
+    (* TODO : make watchdogtimer "overflow" value state dependent instead of fixed 1000
         add an array with overflow values for each state *)                                                  
-      IF WDT > 3000 THEN
+      IF WDT > 6000 THEN
         (* set failure symptome WDOx as true *)
         ssm_transitions := ssm_transitions OR 256;
       END_IF;
@@ -818,431 +960,6 @@ END_IF;]]></xhtml:p>
           </ST>
         </body>
       </pou>
-      <pou name="test" pouType="program">
-        <interface>
-          <localVars>
-            <variable name="mask">
-              <type>
-                <array>
-                  <dimension lower="0" upper="3"/>
-                  <baseType>
-                    <INT/>
-                  </baseType>
-                </array>
-              </type>
-              <initialValue>
-                <arrayValue>
-                  <value>
-                    <simpleValue value="-1"/>
-                  </value>
-                  <value>
-                    <simpleValue value="0"/>
-                  </value>
-                  <value>
-                    <simpleValue value="1"/>
-                  </value>
-                  <value>
-                    <simpleValue value="1"/>
-                  </value>
-                </arrayValue>
-              </initialValue>
-            </variable>
-            <variable name="masks">
-              <type>
-                <array>
-                  <dimension lower="0" upper="3"/>
-                  <dimension lower="0" upper="3"/>
-                  <baseType>
-                    <INT/>
-                  </baseType>
-                </array>
-              </type>
-              <initialValue>
-                <arrayValue>
-                  <value>
-                    <simpleValue value="-1"/>
-                  </value>
-                  <value>
-                    <simpleValue value="0"/>
-                  </value>
-                  <value>
-                    <simpleValue value="1"/>
-                  </value>
-                  <value>
-                    <simpleValue value="1"/>
-                  </value>
-                  <value>
-                    <simpleValue value="-1"/>
-                  </value>
-                  <value>
-                    <simpleValue value="-1"/>
-                  </value>
-                  <value>
-                    <simpleValue value="-1"/>
-                  </value>
-                  <value>
-                    <simpleValue value="-1"/>
-                  </value>
-                  <value>
-                    <simpleValue value="1"/>
-                  </value>
-                  <value>
-                    <simpleValue value="1"/>
-                  </value>
-                  <value>
-                    <simpleValue value="1"/>
-                  </value>
-                  <value>
-                    <simpleValue value="1"/>
-                  </value>
-                  <value>
-                    <simpleValue value="1"/>
-                  </value>
-                  <value>
-                    <simpleValue value="0"/>
-                  </value>
-                  <value>
-                    <simpleValue value="-1"/>
-                  </value>
-                  <value>
-                    <simpleValue value="-1"/>
-                  </value>
-                </arrayValue>
-              </initialValue>
-            </variable>
-            <variable name="mask1">
-              <type>
-                <array>
-                  <dimension lower="0" upper="3"/>
-                  <baseType>
-                    <INT/>
-                  </baseType>
-                </array>
-              </type>
-            </variable>
-            <variable name="mask2">
-              <type>
-                <array>
-                  <dimension lower="0" upper="3"/>
-                  <baseType>
-                    <INT/>
-                  </baseType>
-                </array>
-              </type>
-            </variable>
-            <variable name="help1">
-              <type>
-                <array>
-                  <dimension lower="0" upper="3"/>
-                  <baseType>
-                    <INT/>
-                  </baseType>
-                </array>
-              </type>
-            </variable>
-            <variable name="help2">
-              <type>
-                <array>
-                  <dimension lower="0" upper="3"/>
-                  <baseType>
-                    <INT/>
-                  </baseType>
-                </array>
-              </type>
-            </variable>
-            <variable name="input">
-              <type>
-                <array>
-                  <dimension lower="0" upper="3"/>
-                  <baseType>
-                    <INT/>
-                  </baseType>
-                </array>
-              </type>
-              <initialValue>
-                <arrayValue>
-                  <value>
-                    <simpleValue value="1"/>
-                  </value>
-                  <value>
-                    <simpleValue value="0"/>
-                  </value>
-                  <value>
-                    <simpleValue value="1"/>
-                  </value>
-                  <value>
-                    <simpleValue value="1"/>
-                  </value>
-                </arrayValue>
-              </initialValue>
-            </variable>
-            <variable name="v1">
-              <type>
-                <array>
-                  <dimension lower="0" upper="3"/>
-                  <baseType>
-                    <INT/>
-                  </baseType>
-                </array>
-              </type>
-              <initialValue>
-                <arrayValue>
-                  <value>
-                    <simpleValue value="1"/>
-                  </value>
-                  <value>
-                    <simpleValue value="1"/>
-                  </value>
-                  <value>
-                    <simpleValue value="0"/>
-                  </value>
-                  <value>
-                    <simpleValue value="0"/>
-                  </value>
-                </arrayValue>
-              </initialValue>
-            </variable>
-            <variable name="v2">
-              <type>
-                <array>
-                  <dimension lower="0" upper="3"/>
-                  <baseType>
-                    <INT/>
-                  </baseType>
-                </array>
-              </type>
-              <initialValue>
-                <arrayValue>
-                  <value>
-                    <simpleValue value="0"/>
-                  </value>
-                  <value>
-                    <simpleValue value="1"/>
-                  </value>
-                  <value>
-                    <simpleValue value="1"/>
-                  </value>
-                  <value>
-                    <simpleValue value="0"/>
-                  </value>
-                </arrayValue>
-              </initialValue>
-            </variable>
-            <variable name="v3">
-              <type>
-                <array>
-                  <dimension lower="0" upper="3"/>
-                  <baseType>
-                    <INT/>
-                  </baseType>
-                </array>
-              </type>
-            </variable>
-            <variable name="v3_0">
-              <type>
-                <INT/>
-              </type>
-            </variable>
-            <variable name="v3_1">
-              <type>
-                <INT/>
-              </type>
-            </variable>
-            <variable name="v3_2">
-              <type>
-                <INT/>
-              </type>
-            </variable>
-            <variable name="v3_3">
-              <type>
-                <INT/>
-              </type>
-            </variable>
-            <variable name="mask1_0">
-              <type>
-                <INT/>
-              </type>
-            </variable>
-            <variable name="mask1_1">
-              <type>
-                <INT/>
-              </type>
-            </variable>
-            <variable name="mask1_2">
-              <type>
-                <INT/>
-              </type>
-            </variable>
-            <variable name="mask1_3">
-              <type>
-                <INT/>
-              </type>
-            </variable>
-            <variable name="mask2_0">
-              <type>
-                <INT/>
-              </type>
-            </variable>
-            <variable name="mask2_1">
-              <type>
-                <INT/>
-              </type>
-            </variable>
-            <variable name="mask2_2">
-              <type>
-                <INT/>
-              </type>
-            </variable>
-            <variable name="mask2_3">
-              <type>
-                <INT/>
-              </type>
-            </variable>
-            <variable name="help1_0">
-              <type>
-                <INT/>
-              </type>
-            </variable>
-            <variable name="help1_1">
-              <type>
-                <INT/>
-              </type>
-            </variable>
-            <variable name="help1_2">
-              <type>
-                <INT/>
-              </type>
-            </variable>
-            <variable name="help1_3">
-              <type>
-                <INT/>
-              </type>
-            </variable>
-            <variable name="same">
-              <type>
-                <BOOL/>
-              </type>
-            </variable>
-            <variable name="array_and_instance">
-              <type>
-                <derived name="array_AND"/>
-              </type>
-            </variable>
-            <variable name="array_xor_instance">
-              <type>
-                <derived name="array_XOR"/>
-              </type>
-            </variable>
-            <variable name="array_equal_instance">
-              <type>
-                <derived name="array_EQUAL"/>
-              </type>
-            </variable>
-            <variable name="array_mask1_instance">
-              <type>
-                <derived name="array_MASK1"/>
-              </type>
-            </variable>
-            <variable name="array_mask2_instance">
-              <type>
-                <derived name="array_MASK2"/>
-              </type>
-            </variable>
-            <variable name="array_not_instance">
-              <type>
-                <derived name="array_NOT"/>
-              </type>
-            </variable>
-            <variable name="array_all_1_instance">
-              <type>
-                <derived name="array_ALL_1"/>
-              </type>
-            </variable>
-            <variable name="array_mask_instance">
-              <type>
-                <derived name="array_mask"/>
-              </type>
-            </variable>
-            <variable name="get_mask_instance">
-              <type>
-                <derived name="get_mask"/>
-              </type>
-            </variable>
-          </localVars>
-        </interface>
-        <body>
-          <ST>
-            <xhtml:p><![CDATA[
-
-(* Test of individual function blocks 
-
-array_and_instance(array1 := v1, array2 := v2, output => v3);
-
-array_xor_instance(array1 := v1, array2 := v2, output => v3);
-
-array_equal_instance(array1 := v1, array2 := v1, output => same);
-
-array_mask1_instance(array1 := mask, output => mask1);
-
-array_mask2_instance(array1 := mask, output => mask2);
-
-array_not_instance(array1 := mask, output => v3);
-*)
-
-(* algorithm for mask
-array_mask1_instance(array1 := mask, output => mask1);
-
-array_mask2_instance(array1 := mask, output => mask2);
-
-array_and_instance(array1 := input, array2 := mask1, output => help1);
-
-array_xor_instance(array1 := help1, array2 := mask2, output => help1);
-
-array_all_1_instance(array1 := help1, output => same);
-*)
-
-
-get_mask_instance(masks := masks, maskIndex := 3, mask => mask);
-array_mask_instance(mask := mask, input := input, output => same);
-
-
-
-
-
-
-(* Just to view the values *)
-v3_0 := v3[0];
-v3_1 := v3[1];
-v3_2 := v3[2];
-v3_3 := v3[3];
-
-(* Just to view the values 
-mask1_0 := mask1[0];
-mask1_1 := mask1[1];
-mask1_2 := mask1[2];
-mask1_3 := mask1[3];
-*)
-
-(* Just to view the values 
-mask2_0 := mask2[0];
-mask2_1 := mask2[1];
-mask2_2 := mask2[2];
-mask2_3 := mask2[3];
-*)
-
-(* Just to view the values 
-help1_0 := help1[0];
-help1_1 := help1[1];
-help1_2 := help1[2];
-help1_3 := help1[3];
-*)
-
-(* Test of function
-v3_3 := test_function(MyConstant := 10);
-*)]]></xhtml:p>
-          </ST>
-        </body>
-      </pou>
       <pou name="array_AND" pouType="functionBlock">
         <interface>
           <returnType>
@@ -1254,7 +971,7 @@ v3_3 := test_function(MyConstant := 10);
                 <INT/>
               </type>
               <initialValue>
-                <simpleValue value="3"/>
+                <simpleValue value="8"/>
               </initialValue>
             </variable>
           </localVars>
@@ -1262,7 +979,7 @@ v3_3 := test_function(MyConstant := 10);
             <variable name="array1">
               <type>
                 <array>
-                  <dimension lower="0" upper="3"/>
+                  <dimension lower="0" upper="8"/>
                   <baseType>
                     <INT/>
                   </baseType>
@@ -1272,7 +989,7 @@ v3_3 := test_function(MyConstant := 10);
             <variable name="array2">
               <type>
                 <array>
-                  <dimension lower="0" upper="3"/>
+                  <dimension lower="0" upper="8"/>
                   <baseType>
                     <INT/>
                   </baseType>
@@ -1284,7 +1001,7 @@ v3_3 := test_function(MyConstant := 10);
             <variable name="output">
               <type>
                 <array>
-                  <dimension lower="0" upper="3"/>
+                  <dimension lower="0" upper="8"/>
                   <baseType>
                     <INT/>
                   </baseType>
@@ -1356,7 +1073,7 @@ END_FOR;]]></xhtml:p>
             <variable name="mask">
               <type>
                 <array>
-                  <dimension lower="0" upper="3"/>
+                  <dimension lower="0" upper="8"/>
                   <baseType>
                     <INT/>
                   </baseType>
@@ -1366,7 +1083,7 @@ END_FOR;]]></xhtml:p>
             <variable name="input">
               <type>
                 <array>
-                  <dimension lower="0" upper="3"/>
+                  <dimension lower="0" upper="8"/>
                   <baseType>
                     <INT/>
                   </baseType>
@@ -1378,7 +1095,7 @@ END_FOR;]]></xhtml:p>
             <variable name="help">
               <type>
                 <array>
-                  <dimension lower="0" upper="3"/>
+                  <dimension lower="0" upper="8"/>
                   <baseType>
                     <INT/>
                   </baseType>
@@ -1388,7 +1105,7 @@ END_FOR;]]></xhtml:p>
             <variable name="mask1">
               <type>
                 <array>
-                  <dimension lower="0" upper="3"/>
+                  <dimension lower="0" upper="8"/>
                   <baseType>
                     <INT/>
                   </baseType>
@@ -1398,7 +1115,7 @@ END_FOR;]]></xhtml:p>
             <variable name="mask2">
               <type>
                 <array>
-                  <dimension lower="0" upper="3"/>
+                  <dimension lower="0" upper="8"/>
                   <baseType>
                     <INT/>
                   </baseType>
@@ -1443,15 +1160,15 @@ END_FOR;]]></xhtml:p>
         </interface>
         <body>
           <ST>
-            <xhtml:p><![CDATA[(* algorithm for mask*)
-array_xor_instance(array1 := mask, output => mask1);
-
-array_mask2_instance(array1 := mask, output => mask2);
-
-array_and_instance(array1 := input, array2 := mask1, output => help);
-
-array_xor_instance(array1 := help, array2 := mask2, output => help);
-
+            <xhtml:p><![CDATA[(* algorithm for mask*)
+array_xor_instance(array1 := mask, output => mask1);
+
+array_mask2_instance(array1 := mask, output => mask2);
+
+array_and_instance(array1 := input, array2 := mask1, output => help);
+
+array_xor_instance(array1 := help, array2 := mask2, output => help);
+
 array_all_1_instance(array1 := help, output => output);]]></xhtml:p>
           </ST>
         </body>
@@ -1464,7 +1181,7 @@ array_all_1_instance(array1 := help, output => output);]]></xhtml:p>
                 <INT/>
               </type>
               <initialValue>
-                <simpleValue value="3"/>
+                <simpleValue value="8"/>
               </initialValue>
             </variable>
           </localVars>
@@ -1472,8 +1189,8 @@ array_all_1_instance(array1 := help, output => output);]]></xhtml:p>
             <variable name="masks">
               <type>
                 <array>
-                  <dimension lower="0" upper="3"/>
-                  <dimension lower="0" upper="3"/>
+                  <dimension lower="0" upper="9"/>
+                  <dimension lower="0" upper="8"/>
                   <baseType>
                     <INT/>
                   </baseType>
@@ -1490,7 +1207,7 @@ array_all_1_instance(array1 := help, output => output);]]></xhtml:p>
             <variable name="mask">
               <type>
                 <array>
-                  <dimension lower="0" upper="3"/>
+                  <dimension lower="0" upper="8"/>
                   <baseType>
                     <INT/>
                   </baseType>
@@ -1528,7 +1245,6 @@ END_FOR;]]></xhtml:p>
           <task name="WDT_clock" priority="0" interval="T#10ms">
             <pouInstance name="WDTimer" typeName="watchdogtimer"/>
           </task>
-          <pouInstance name="TST" typeName="test"/>
         </resource>
         <globalVars>
           <variable name="controller_output">
