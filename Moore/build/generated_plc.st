@@ -28,7 +28,7 @@ PROGRAM superstate_machine
     tmp3 : INT := 123;
   END_VAR
   VAR_EXTERNAL
-    sensor_output : WORD;
+    sensor_output : DWORD;
   END_VAR
 
   VAR
@@ -82,95 +82,133 @@ PROGRAM watchdogtimer
 END_PROGRAM
 
 PROGRAM autoproduction
+  VAR
+    valueMatrix : ARRAY [0..11] OF DWORD;
+    maskMatrix : ARRAY [0..11] OF DWORD;
+    outputMatrix : ARRAY [0..10] OF DWORD;
+  END_VAR
   VAR_EXTERNAL
-    controller_output : BYTE;
+    controller_output : DWORD;
     current_superstate : INT;
-    sensor_output : WORD;
+    sensor_output : DWORD;
     WDT : UINT;
     ssm_transitions : WORD;
   END_VAR
   VAR
     current_state : INT;
-    col : INT;
+    column : INT;
   END_VAR
+
+  (*TESTOVACÍ SEKVENCE - VÝSTUP ZE SENZORŮ*)
+  (*
+  VLOŽENÍ OBROBKU -- 202
+  UPNUTÍ OBROBKU --170
+  SPUŠTĚNÍ VŘETENE --186
+  VYSUNUTÍ MOTORU C (VRTÁNÍ) --182
+  ZASUNUTÍ MOTORU C (VRTÁNÍ) --186
+  PRESUN OBROBKU DO DRUHÉ POLOHY --185
+  VYSUNUTÍ MOTORU C (VRTÁNÍ) --181
+  ZASUNUTÍ MOTORU C (VRTÁNÍ) --185
+  VYPNUTÍ VŘETENE --169
+  NÁVRAT DO PŮVODNÍ POLOHY --170
+  UVOLNĚNÍ OBROBKU --202
+  ODEBRÁNÍ OBROBKU --74
+  *)
 
   VAR
-  transition_matrix: ARRAY[0..9,0..9] OF INT := [
-  (*     prox  a1      b1      c1      c0d0    d1      c0d1      b0      d0      a0 *)
-          1,    -1,     -1,     -1,      -1,     -1,     -1,      -1,     -1,     -1, (* START - 100 *)
-         -1,     2,     -1,     -1,      -1,     -1,     -1,      -1,     -1,     -1, (* 101 *)
-         -1,    -1,      3,     -1,      -1,     -1,     -1,      -1,     -1,     -1, (* 102 *)
-         -1,    -1,     -1,      4,      -1,     -1,     -1,      -1,     -1,     -1, (* 103 *)
-         -1,    -1,     -1,     -1,       5,     -1,      6,      -1,     -1,     -1, (* 104 *)
-         -1,    -1,     -1,     -1,      -1,      3,     -1,      -1,     -1,     -1, (* 105 *)
-         -1,    -1,     -1,     -1,      -1,     -1,     -1,       7,     -1,     -1, (* 106 *)
-         -1,    -1,     -1,     -1,      -1,     -1,     -1,      -1,      8,     -1, (* 107 *)
-         -1,    -1,     -1,     -1,      -1,     -1,     -1,      -1,     -1,      9, (* 108 *)
-         -1,    -1,     -1,     -1,      -1,     -1,     -1,      -1,     -1,     -1 (* 109 *)
+    transitionMatrix: ARRAY[0..10,0..10] OF INT := [
+    (* prox   Nprox   a1      b1      c1      c0d0    d1      c0d1       Nb      d0      a0 *)
+       1,    -1,      -1,     -1,     -1,      -1,     -1,     -1,      -1,     -1,     -1, (* (0) ČEKÁ NA VLOŽENÍ OBROBKU  *)
+      -1,    -1,       2,     -1,     -1,      -1,     -1,     -1,      -1,     -1,     -1, (* (1) ČEKÁ NA VYSUNUTÍ MOTORU A (UPNUTÍ) *)
+      -1,    -1,      -1,      3,     -1,      -1,     -1,     -1,      -1,     -1,     -1, (* (2) ČEKÁ NA SPUŠTĚNÍ VŘETENE *)
+      -1,    -1,      -1,     -1,      4,      -1,     -1,     -1,      -1,     -1,     -1, (* (3) ČEKÁ NA VYSUNUTÍ MOTORU C (VRTÁNÍ) *)
+      -1,    -1,      -1,     -1,     -1,       5,     -1,      6,      -1,     -1,     -1, (* (4) ČEKÁ NA ZASUNUTÍ MOTORU C (VRTÁNÍ) *)
+      -1,    -1,      -1,     -1,     -1,      -1,      3,     -1,      -1,     -1,     -1, (* (5) ČEKÁ NA VYSUNUTÍ MOTORU D (PŘESUN OBROBKU DO DRUHÉ POLOHY) *)
+      -1,    -1,      -1,     -1,     -1,      -1,     -1,     -1,       7,     -1,     -1, (* (6) ČEKÁ NA VYPNUTÍ VŘETENE (KONEC VRTÁNÍ) *)
+      -1,    -1,      -1,     -1,     -1,      -1,     -1,     -1,      -1,      8,     -1, (* (7) ČEKÁ NA ZASUNUTÍ MOTORU D (NÁVRAT DO PŮVODNÍ POLOHY) *)
+      -1,    -1,      -1,     -1,     -1,      -1,     -1,     -1,      -1,     -1,      9, (* (8) ČEKÁ NA ZASUNUTÍ MOTORU A (UVOLNĚNÍ OBROBKU) *)
+      -1,    10,      -1,     -1,     -1,      -1,     -1,     -1,      -1,     -1,     -1, (* (9) ČEKÁ NA ODEBRÁNÍ OBROBKU *)
+      -1,    -1,      -1,     -1,     -1,      -1,     -1,     -1,      -1,     -1,     -1  (* (10) KONEČNÝ STAV SKOČÍ DO SUPERSTAVU INIT *)
     ];
-  END_VAR
+  END_VAR 
 
-  VAR
-  mask: ARRAY[0..10] OF WORD  := [ (* 0 0 0 0 0 0 emg a0 a1 b0 b1 c0 c1 d0 d1 prox *)
-    2#0000000_000000001, (*       prox 1*)
-    2#0000000_010000000, (*       a1 2*)
-    2#0000000_000100000, (*       b1 3*)
-    2#0000000_000001000, (*       c1 4*)
-    2#0000000_000010100, (*       c0d0 5*)
-    2#0000000_000000010, (*       d1 6*)
-    2#0000000_000010010, (*       c0d1 7*)
-    2#0000000_001000000, (*       b0 8*)
-    2#0000000_000000100, (*       d0 9*)
-    2#0000000_100000000 (*        a0 10*)
-    (* back to init state *)
-    ];
-  END_VAR
+  (*NAPLNĚNÍ MATICE MASEK*)
+  (* ...  _ prox a0 a1 b c0 c1 d0 d1  - JEDNOTLIVÉ BITY PŘEDSTAVUJÍCÍ VSTUPY PLC V TOMTO POŘADÍ*)
+  (*JEDNOTLIVÉ ŘÁDKY MAJÍ STEJNÉ POŘADÍ JAKO JSOU SLOUPCE MATICE PŘECHODU*)
+  maskMatrix[0]  := 2#00000000_00000000_00000000_10000000; (*PROXIMITY SENZOR SEPNUTO -- 128*) 
+  maskMatrix[1]  := 2#00000000_00000000_00000000_10000000; (*PROXIMITY SENZOR NESEPNUTO -- 128*)
+  maskMatrix[2]  := 2#00000000_00000000_00000000_00100000; (*KONCOVÝ SENZOR MOTORU A V POLOZE VYSUNUTO --32*)
+  maskMatrix[3]  := 2#00000000_00000000_00000000_00010000; (*SENZOR SEPNUTÍ VŘETENE B V POLOZE ZAPNUTO --16*)
+  maskMatrix[4]  := 2#00000000_00000000_00000000_00000100; (*KONCOVÝ SENZOR MOTORU C V POLOZE VYSUNUTO --4*)
+  maskMatrix[5]  := 2#00000000_00000000_00000000_00001010; (*KONCOVÝ SENZOR MOTORU C A D V POLOZE ZASUNUTO --10*)
+  maskMatrix[6]  := 2#00000000_00000000_00000000_00000001; (*KONCOVÝ SENZOR MOTORU D V POLOZE VYSUNUTO --1*)
+  maskMatrix[7]  := 2#00000000_00000000_00000000_00001001; (*KONCOVÝ SENZOR MOTORU D V POLOZE VYSUNUTO A KONCOVÝ SENZOR MOTORU C V POLOZE ZASUNUTO --9*)
+  maskMatrix[8]  := 2#00000000_00000000_00000000_00010000; (*SENZOR SEPNUTÍ VŘETENE B V POLOZE VYPNUTO --16*)
+  maskMatrix[9]  := 2#00000000_00000000_00000000_00000010; (*KONCOVÝ SENZOR MOTORU D V POLOZE ZASUNUTO --2*)
+  maskMatrix[10] := 2#00000000_00000000_00000000_01000000; (*KONCOVÝ SENZOR MOTORU A V POLOZE ZASUNUTO --64*)
 
-  VAR
-  state_output: ARRAY[0..11] OF BYTE  := [ 
-  (* A+ A- B C D+ D- 0 0 /// State transitions *)
-    2#00000000, (* init - wait                                       0 0 *)
-    2#10000000, (* prox -> 1 - set A+                                128 1*)
-    2#00100000, (* a0 -> 0, a1 -> 1 - set B, reset A+ (bistable)     32 2*)
-    2#00110000, (* b0 -> 0, b1 -> 1 - set C                          48 3*)
-    2#00100000, (* c0 -> 0, c1 -> 1 - reset C                        32 4*)
-    2#00101000, (* c0 -> 1, c1 -> 0 - set D+                         40 5*)
-    2#00000000, (* c0 -> 1, c1 -> 0 - reset B                        0 6*)
-    2#00000100, (* b0 -> 1, b1 -> 0 - set D-                         8 7*)
-    2#01000000, (* d0 -> 1, d1 -> 0 - reset D-, set A-               64 8*)
-    2#00000000 (*  a0 -> 1, a1 -> 0 - reset A-                       0 9*)
-    (* back to init state *)
-    ];
-  END_VAR
+  (*NAPLNĚNÍ MATICE POŽADOVANÝCH HODNOT*)
+  (* ... emg a0 _ a1 b0 b1 c0 c1 d0 d1 prox  - JEDNOTLIVÉ BITY PŘEDSTAVUJÍCÍ VSTUPY PLC V TOMTO POŘADÍ*)
+  valueMatrix[0]  := 2#00000000_00000000_00000000_10000000; (*PROXIMITY SENZOR SEPNUTO*)
+  valueMatrix[1]  := 2#00000000_00000000_00000000_00000000; (*PROXIMITY SENZOR NESEPNUTO*)
+  valueMatrix[2]  := 2#00000000_00000000_00000000_00100000; (*KONCOVÝ SENZOR MOTORU A V POLOZE VYSUNUTO*)
+  valueMatrix[3]  := 2#00000000_00000000_00000000_00010000; (*SENZOR SEPNUTÍ VŘETENE B V POLOZE ZAPNUTO*)
+  valueMatrix[4]  := 2#00000000_00000000_00000000_00000100; (*KONCOVÝ SENZOR MOTORU C V POLOZE VYSUNUTO*)
+  valueMatrix[5]  := 2#00000000_00000000_00000000_00001010; (*KONCOVÝ SENZOR MOTORU C A D V POLOZE ZASUNUTO*)
+  valueMatrix[6]  := 2#00000000_00000000_00000000_00000001; (*KONCOVÝ SENZOR MOTORU D V POLOZE VYSUNUTO*)
+  valueMatrix[7]  := 2#00000000_00000000_00000000_00001001; (*KONCOVÝ SENZOR MOTORU D V POLOZE VYSUNUTO A KONCOVÝ SENZOR MOTORU C V POLOZE ZASUNUTO*)
+  valueMatrix[8]  := 2#00000000_00000000_00000000_00000000; (*SENZOR SEPNUTÍ VŘETENE B V POLOZE VYPNUTO*)
+  valueMatrix[9]  := 2#00000000_00000000_00000000_00000010; (*KONCOVÝ SENZOR MOTORU D V POLOZE ZASUNUTO*)
+  valueMatrix[10] := 2#00000000_00000000_00000000_01000000; (*KONCOVÝ SENZOR MOTORU A V POLOZE ZASUNUTO*)
 
-  (* permission *)
+  (*NAPLNĚNÍ MATICE VÝSTUPŮ*)
+  (* ... A+ A- B C D+ D- 0 0   - JEDNOTLIVÉ BITY PŘEDSTAVUJÍCÍ AKTORY V TOMTO POŘADÍ*)
+  outputMatrix[0]  := 2#00000000_00000000_00000000_00000000; (*INICIÁLNÍ STAV, ŽÁDNÝ VÝSTUP NA AKTORY*)
+  outputMatrix[1]  := 2#00000000_00000000_00000000_10000000; (*UPNUTÍ OBROBKU*)
+  outputMatrix[2]  := 2#00000000_00000000_00000000_00100000; (*SEPNUTÍ VŘETENE*)
+  outputMatrix[3]  := 2#00000000_00000000_00000000_00110000; (*POSUV VŘETENE K OBROBKU*)
+  outputMatrix[4]  := 2#00000000_00000000_00000000_00100000; (*POSUV VŘETENE OD OBROBKU*)
+  outputMatrix[5]  := 2#00000000_00000000_00000000_00101000; (*PŘESUNUTÍ OBROBKU DO DRUHÉ POLOHY*)
+  outputMatrix[6]  := 2#00000000_00000000_00000000_00000000; (*VYPNUTÍ VŘETENE*)
+  outputMatrix[7]  := 2#00000000_00000000_00000000_00000100; (*NÁVRAT OBROBKU DO PŮVODNÍ POLOHY*)
+  outputMatrix[8]  := 2#00000000_00000000_00000000_01000000; (*UVOLNĚNÍ OBROBKU*)
+  outputMatrix[9]  := 2#00000000_00000000_00000000_00000000; (*ČEKÁNÍ NA ODEBRÁNÍ OBROBKU*)
+
+
+
+
+
+
+
+
+
+
+  (* ZDE JE KONTROLOVÁNO ZDA JSME V DANÉM SUPERSTAVU *)
   IF current_superstate = 1 THEN
         
        
         
-        (* interstate transitions *)
-        FOR col := 0 TO 10 DO
-          IF (transition_matrix[current_state,col] <> -1) THEN
-            IF (sensor_output AND mask[col]) = mask[col] THEN
-              current_state :=  transition_matrix[current_state,col];
+        (* PROCHÁZENÍ MATICE PŘECHODŮ *)
+        FOR column := 0 TO 10 DO
+          IF (transitionMatrix[current_state,column] <> -1) THEN
+            IF (sensor_output AND maskMatrix[column]) = valueMatrix[column] THEN
+              current_state :=  transitionMatrix[current_state,column];
               WDT := 0; (*RESET watchdogtimer*)
             END_IF;
           END_IF;
         END_FOR;
         
         (* actuator signal *)
-        controller_output := state_output[current_state];
+        controller_output := outputMatrix[current_state];
         
-         (* watchdog timer *)
-  (* TODO : make watchdogtimer "overflow" value state dependent instead of fixed 1000
-          add an array with overflow values for each state *)                                                  
+        (* watchdog timer  - KONTROLUJE ZDA NEDOŠLO K ZASEKNUTÍ*)                                                 
         IF WDT > 3000 THEN
           (* set failure symptome WDOx as true *)
           ssm_transitions := ssm_transitions OR 256;
         END_IF;
         
-       (* final state reached *)                                              
-        IF current_state = 9 THEN
+       (* BYLO DOSAŽENO KONEČNÉHO STAVU SKOK DO IDDLE *)                                              
+        IF current_state = 10 THEN
           ssm_transitions := ssm_transitions OR 4;
           current_state := 0;
         END_IF;
@@ -181,10 +219,10 @@ END_PROGRAM
 
 CONFIGURATION Config0
   VAR_GLOBAL
-    controller_output : BYTE;
+    controller_output : DWORD;
     WDT : UINT;
     current_superstate : INT;
-    sensor_output : WORD;
+    sensor_output : DWORD;
     ssm_transitions : WORD;
   END_VAR
 

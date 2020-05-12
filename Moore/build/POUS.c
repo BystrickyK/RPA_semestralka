@@ -231,7 +231,7 @@ void SUPERSTATE_MACHINE_init__(SUPERSTATE_MACHINE *data__, BOOL retain) {
   __INIT_VAR(data__->TMP1,0,retain)
   __INIT_VAR(data__->TMP2,0,retain)
   __INIT_VAR(data__->TMP3,123,retain)
-  __INIT_EXTERNAL(WORD,SENSOR_OUTPUT,data__->SENSOR_OUTPUT,retain)
+  __INIT_EXTERNAL(DWORD,SENSOR_OUTPUT,data__->SENSOR_OUTPUT,retain)
   {
     static const __ARRAY_OF_INT_6_11 temp = {{4,1,-1,2,-1,3,-1,-1,-1,-1,-1,4,-1,0,-1,-1,-1,-1,-1,5,-1,-1,4,-1,-1,-1,0,-1,-1,-1,-1,-1,-1,4,-1,-1,-1,-1,-1,0,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,0,-1,-1,-1,4,-1,-1,-1,-1,-1,-1,-1,-1,1,3}};
     __SET_VAR(data__->,TRANSITION_MATRIX,,temp);
@@ -286,24 +286,28 @@ __end:
 
 
 void AUTOPRODUCTION_init__(AUTOPRODUCTION *data__, BOOL retain) {
-  __INIT_EXTERNAL(BYTE,CONTROLLER_OUTPUT,data__->CONTROLLER_OUTPUT,retain)
+  
+  {
+    static const __ARRAY_OF_DWORD_12 temp = {{0,0,0,0,0,0,0,0,0,0,0,0}};
+    __SET_VAR(data__->,VALUEMATRIX,,temp);
+  }
+  {
+    static const __ARRAY_OF_DWORD_12 temp = {{0,0,0,0,0,0,0,0,0,0,0,0}};
+    __SET_VAR(data__->,MASKMATRIX,,temp);
+  }
+  {
+    static const __ARRAY_OF_DWORD_11 temp = {{0,0,0,0,0,0,0,0,0,0,0}};
+    __SET_VAR(data__->,OUTPUTMATRIX,,temp);
+  }__INIT_EXTERNAL(DWORD,CONTROLLER_OUTPUT,data__->CONTROLLER_OUTPUT,retain)
   __INIT_EXTERNAL(INT,CURRENT_SUPERSTATE,data__->CURRENT_SUPERSTATE,retain)
-  __INIT_EXTERNAL(WORD,SENSOR_OUTPUT,data__->SENSOR_OUTPUT,retain)
+  __INIT_EXTERNAL(DWORD,SENSOR_OUTPUT,data__->SENSOR_OUTPUT,retain)
   __INIT_EXTERNAL(UINT,WDT,data__->WDT,retain)
   __INIT_EXTERNAL(WORD,SSM_TRANSITIONS,data__->SSM_TRANSITIONS,retain)
   __INIT_VAR(data__->CURRENT_STATE,0,retain)
-  __INIT_VAR(data__->COL,0,retain)
+  __INIT_VAR(data__->COLUMN,0,retain)
   {
-    static const __ARRAY_OF_INT_10_10 temp = {{1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,2,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,3,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,4,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,5,-1,6,-1,-1,-1,-1,-1,-1,-1,-1,3,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,7,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,8,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,9,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1}};
-    __SET_VAR(data__->,TRANSITION_MATRIX,,temp);
-  }
-  {
-    static const __ARRAY_OF_WORD_11 temp = {{0x0001,0x0080,0x0020,0x0008,0x0014,0x0002,0x0012,0x0040,0x0004,0x0100,0}};
-    __SET_VAR(data__->,MASK,,temp);
-  }
-  {
-    static const __ARRAY_OF_BYTE_12 temp = {{0x00,0x80,0x20,0x30,0x20,0x28,0x00,0x04,0x40,0x00,0,0}};
-    __SET_VAR(data__->,STATE_OUTPUT,,temp);
+    static const __ARRAY_OF_INT_11_11 temp = {{1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,2,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,3,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,4,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,5,-1,6,-1,-1,-1,-1,-1,-1,-1,-1,-1,3,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,7,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,8,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,9,-1,10,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1}};
+    __SET_VAR(data__->,TRANSITIONMATRIX,,temp);
   }
 }
 
@@ -311,20 +315,52 @@ void AUTOPRODUCTION_init__(AUTOPRODUCTION *data__, BOOL retain) {
 void AUTOPRODUCTION_body__(AUTOPRODUCTION *data__) {
   // Initialise TEMP variables
 
+  __SET_VAR(data__->,MASKMATRIX,.table[(0) - (0)],0x00000080);
+  __SET_VAR(data__->,MASKMATRIX,.table[(1) - (0)],0x00000080);
+  __SET_VAR(data__->,MASKMATRIX,.table[(2) - (0)],0x00000020);
+  __SET_VAR(data__->,MASKMATRIX,.table[(3) - (0)],0x00000010);
+  __SET_VAR(data__->,MASKMATRIX,.table[(4) - (0)],0x00000004);
+  __SET_VAR(data__->,MASKMATRIX,.table[(5) - (0)],0x0000000A);
+  __SET_VAR(data__->,MASKMATRIX,.table[(6) - (0)],0x00000001);
+  __SET_VAR(data__->,MASKMATRIX,.table[(7) - (0)],0x00000009);
+  __SET_VAR(data__->,MASKMATRIX,.table[(8) - (0)],0x00000010);
+  __SET_VAR(data__->,MASKMATRIX,.table[(9) - (0)],0x00000002);
+  __SET_VAR(data__->,MASKMATRIX,.table[(10) - (0)],0x00000040);
+  __SET_VAR(data__->,VALUEMATRIX,.table[(0) - (0)],0x00000080);
+  __SET_VAR(data__->,VALUEMATRIX,.table[(1) - (0)],0x00000000);
+  __SET_VAR(data__->,VALUEMATRIX,.table[(2) - (0)],0x00000020);
+  __SET_VAR(data__->,VALUEMATRIX,.table[(3) - (0)],0x00000010);
+  __SET_VAR(data__->,VALUEMATRIX,.table[(4) - (0)],0x00000004);
+  __SET_VAR(data__->,VALUEMATRIX,.table[(5) - (0)],0x0000000A);
+  __SET_VAR(data__->,VALUEMATRIX,.table[(6) - (0)],0x00000001);
+  __SET_VAR(data__->,VALUEMATRIX,.table[(7) - (0)],0x00000009);
+  __SET_VAR(data__->,VALUEMATRIX,.table[(8) - (0)],0x00000000);
+  __SET_VAR(data__->,VALUEMATRIX,.table[(9) - (0)],0x00000002);
+  __SET_VAR(data__->,VALUEMATRIX,.table[(10) - (0)],0x00000040);
+  __SET_VAR(data__->,OUTPUTMATRIX,.table[(0) - (0)],0x00000000);
+  __SET_VAR(data__->,OUTPUTMATRIX,.table[(1) - (0)],0x00000080);
+  __SET_VAR(data__->,OUTPUTMATRIX,.table[(2) - (0)],0x00000020);
+  __SET_VAR(data__->,OUTPUTMATRIX,.table[(3) - (0)],0x00000030);
+  __SET_VAR(data__->,OUTPUTMATRIX,.table[(4) - (0)],0x00000020);
+  __SET_VAR(data__->,OUTPUTMATRIX,.table[(5) - (0)],0x00000028);
+  __SET_VAR(data__->,OUTPUTMATRIX,.table[(6) - (0)],0x00000000);
+  __SET_VAR(data__->,OUTPUTMATRIX,.table[(7) - (0)],0x00000004);
+  __SET_VAR(data__->,OUTPUTMATRIX,.table[(8) - (0)],0x00000040);
+  __SET_VAR(data__->,OUTPUTMATRIX,.table[(9) - (0)],0x00000000);
   if ((__GET_EXTERNAL(data__->CURRENT_SUPERSTATE,) == 1)) {
-    for(__GET_VAR(data__->COL,) = 0; __GET_VAR(data__->COL,) <= 10; __GET_VAR(data__->COL,)++) {
-      if ((__GET_VAR(data__->TRANSITION_MATRIX,.table[(__GET_VAR(data__->CURRENT_STATE,)) - (0)][(__GET_VAR(data__->COL,)) - (0)]) != -1)) {
-        if (((__GET_EXTERNAL(data__->SENSOR_OUTPUT,) & __GET_VAR(data__->MASK,.table[(__GET_VAR(data__->COL,)) - (0)])) == __GET_VAR(data__->MASK,.table[(__GET_VAR(data__->COL,)) - (0)]))) {
-          __SET_VAR(data__->,CURRENT_STATE,,__GET_VAR(data__->TRANSITION_MATRIX,.table[(__GET_VAR(data__->CURRENT_STATE,)) - (0)][(__GET_VAR(data__->COL,)) - (0)]));
+    for(__GET_VAR(data__->COLUMN,) = 0; __GET_VAR(data__->COLUMN,) <= 10; __GET_VAR(data__->COLUMN,)++) {
+      if ((__GET_VAR(data__->TRANSITIONMATRIX,.table[(__GET_VAR(data__->CURRENT_STATE,)) - (0)][(__GET_VAR(data__->COLUMN,)) - (0)]) != -1)) {
+        if (((__GET_EXTERNAL(data__->SENSOR_OUTPUT,) & __GET_VAR(data__->MASKMATRIX,.table[(__GET_VAR(data__->COLUMN,)) - (0)])) == __GET_VAR(data__->VALUEMATRIX,.table[(__GET_VAR(data__->COLUMN,)) - (0)]))) {
+          __SET_VAR(data__->,CURRENT_STATE,,__GET_VAR(data__->TRANSITIONMATRIX,.table[(__GET_VAR(data__->CURRENT_STATE,)) - (0)][(__GET_VAR(data__->COLUMN,)) - (0)]));
           __SET_EXTERNAL(data__->,WDT,,0);
         };
       };
     };
-    __SET_EXTERNAL(data__->,CONTROLLER_OUTPUT,,__GET_VAR(data__->STATE_OUTPUT,.table[(__GET_VAR(data__->CURRENT_STATE,)) - (0)]));
+    __SET_EXTERNAL(data__->,CONTROLLER_OUTPUT,,__GET_VAR(data__->OUTPUTMATRIX,.table[(__GET_VAR(data__->CURRENT_STATE,)) - (0)]));
     if ((__GET_EXTERNAL(data__->WDT,) > 3000)) {
       __SET_EXTERNAL(data__->,SSM_TRANSITIONS,,(__GET_EXTERNAL(data__->SSM_TRANSITIONS,) | 256));
     };
-    if ((__GET_VAR(data__->CURRENT_STATE,) == 9)) {
+    if ((__GET_VAR(data__->CURRENT_STATE,) == 10)) {
       __SET_EXTERNAL(data__->,SSM_TRANSITIONS,,(__GET_EXTERNAL(data__->SSM_TRANSITIONS,) | 4));
       __SET_VAR(data__->,CURRENT_STATE,,0);
     };
