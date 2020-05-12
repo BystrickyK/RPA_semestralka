@@ -26,7 +26,7 @@ void __publish_debug (void){}
 #include <stdio.h>
 
 #ifndef TARGET_ONLINE_DEBUG_DISABLE
-#define BUFFER_SIZE 56
+#define BUFFER_SIZE 74
 
 /* Atomically accessed variable for buffer state */
 #define BUFFER_FREE 0
@@ -46,6 +46,7 @@ static unsigned int retain_offset = 0;
  **/
 extern SUPERSTATE_MACHINE RES0__SSM;
 extern AUTOPRODUCTION RES0__AP;
+extern MANUALPRODUCTION RES0__MP;
 extern FAILURE RES0__FAIL;
 extern WATCHDOGTIMER RES0__WDTIMER;
 
@@ -59,6 +60,7 @@ extern __IEC_DWORD_t CONFIG0__SENSOR_OUTPUT;
 extern __IEC_WORD_t CONFIG0__SSM_TRANSITIONS;
 extern       SUPERSTATE_MACHINE   RES0__SSM;
 extern       AUTOPRODUCTION   RES0__AP;
+extern       MANUALPRODUCTION   RES0__MP;
 extern       FAILURE   RES0__FAIL;
 extern       WATCHDOGTIMER   RES0__WDTIMER;
 
@@ -88,6 +90,13 @@ static dbgvardsc_t dbgvardsc[] = {
 {&(RES0__AP.SSM_TRANSITIONS), WORD_P_ENUM},
 {&(RES0__AP.CURRENT_STATE), INT_ENUM},
 {&(RES0__AP.COLUMN), INT_ENUM},
+{&(RES0__MP.CONTROLLER_OUTPUT), DWORD_P_ENUM},
+{&(RES0__MP.CURRENT_SUPERSTATE), INT_P_ENUM},
+{&(RES0__MP.SENSOR_OUTPUT), DWORD_P_ENUM},
+{&(RES0__MP.WDT), UINT_P_ENUM},
+{&(RES0__MP.SSM_TRANSITIONS), WORD_P_ENUM},
+{&(RES0__MP.CURRENT_STATE), INT_ENUM},
+{&(RES0__MP.COLUMN), INT_ENUM},
 {&(RES0__FAIL.CURRENT_SUPERSTATE), INT_P_ENUM},
 {&(RES0__FAIL.SSM_TRANSITIONS), WORD_P_ENUM},
 {&(RES0__WDTIMER.WDT), UINT_P_ENUM}
