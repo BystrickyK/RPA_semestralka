@@ -92,26 +92,9 @@ FUNCTION_BLOCK python_gear
 END_FUNCTION_BLOCK
 
 
-PROGRAM failure
-  VAR_EXTERNAL
-    current_superstate : INT;
-    ssm_transitions : WORD;
-  END_VAR
-
-  (* permission *)
-  IF current_superstate = 5 THEN
-    
-        (* set failure symptome WDOx as false *)
-        ssm_transitions := ssm_transitions AND NOT 256;
-        
-        
-        
-  END_IF;
-END_PROGRAM
-
 PROGRAM superstate_machine
   VAR_EXTERNAL
-    ssm_transitions : WORD;
+    ssm_transitions : DWORD;
     current_superstate : INT;
     WDT : UINT;
   END_VAR
@@ -124,7 +107,21 @@ PROGRAM superstate_machine
   VAR_EXTERNAL
     sensor_output : DWORD;
   END_VAR
+  VAR
+    EM : BOOL;
+    SAP : BOOL;
+    APF : BOOL;
+    SMP : BOOL;
+    MPF : BOOL;
+    SSVC : BOOL;
+    SVCF : BOOL;
+    EMF : BOOL;
+    WDOx : BOOL;
+    RESx : BOOL;
+    BAD : BOOL;
+  END_VAR
 
+  (*NAPLNENI MATICE PRECHODU*)
   VAR
   transition_matrix: ARRAY[0..5,0..10] OF INT := [
   (*  1     2     4     8     16    32      64      128   256     512      1024
@@ -132,28 +129,45 @@ PROGRAM superstate_machine
       4,    1,    -1,   2,    -1,   3,      -1,     -1,   -1,     -1,       -1, (* IDLE *)
       4,    -1,   0,    -1,   -1,   -1,     -1,     -1,   5,      -1,       -1, (* AP *)
       4,    -1,   -1,   -1,   0,    -1,     -1,     -1,   -1,     -1,       -1, (* MP *)
-      4,    -1,   -1,   -1,   -1,   -1,     0,      -1,   -1,     -1,       -1, (* SVC *)
-      -1,   -1,   -1,   -1,   -1,   -1,     -1,     0,    -1,     -1,       -1, (* EMG *)
-      4,    -1,   -1,   -1,   -1,   -1,     -1,     -1,   -1,      1,       3   (* FAIL *)    
+      4,    -1,   -1,   -1,   -1,   -1,      0,      -1,   -1,     -1,       -1, (* SVC *)
+      -1,   -1,   -1,   -1,   -1,   -1,     -1,      0,    -1,     -1,       -1, (* EMG *)
+      4,    -1,   -1,   -1,   -1,   -1,     -1,     -1,   -1,      1,        3   (* FAIL *)    
     ];
   END_VAR
 
+  (*NAPLNENI MATICE MASEK, V TOMTO PRIPADE STACI POUZE TA, NEB NEPOTREBUJEME POROVNAVAT NULOVE HODNOTY*)
   VAR
-  transition_masks: ARRAY[0..10] OF WORD := [
-  (*  BAD RESx WDOx  EMF  SVCF SSVC  MPF SMP APF SAP EM   *)
-  2#00000_00000000001,
-  2#00000_00000000010,
-  2#00000_00000000100,
-  2#00000_00000001000,
-  2#00000_00000010000,
-  2#00000_00000100000,
-  2#00000_00001000000,
-  2#00000_00010000000,
-  2#00000_00100000000,
-  2#00000_01000000000,
-  2#00000_10000000000
+  transition_masks: ARRAY[0..10] OF DWORD := [
+  (*  BAD RESx WDOx  _ EMF  SVCF SSVC  MPF SMP APF SAP EM   *)
+  2#00000000_00000000_00000000_00000001,
+  2#00000000_00000000_00000000_00000010,
+  2#00000000_00000000_00000000_00000100,
+  2#00000000_00000000_00000000_00001000,
+  2#00000000_00000000_00000000_00010000,
+  2#00000000_00000000_00000000_00100000,
+  2#00000000_00000000_00000000_01000000,
+  2#00000000_00000000_00000000_10000000,
+  2#00000000_00000000_00000001_00000000,
+  2#00000000_00000000_00000010_00000000,
+  2#00000000_00000000_00000100_00000000
   ];
   END_VAR
+
+  (* NAČTENÍ VSTUPŮ *)
+        EM :=   DWORD_TO_BOOL(ssm_transitions AND 2#00000000_00000000_00000000_00000001);
+        SAP :=  DWORD_TO_BOOL(ssm_transitions AND 2#00000000_00000000_00000000_00000010);
+        APF :=  DWORD_TO_BOOL(ssm_transitions AND 2#00000000_00000000_00000000_00000100);
+        SMP :=  DWORD_TO_BOOL(ssm_transitions AND 2#00000000_00000000_00000000_00001000);
+        MPF :=  DWORD_TO_BOOL(ssm_transitions AND 2#00000000_00000000_00000000_00010000);
+        SSVC := DWORD_TO_BOOL(ssm_transitions AND 2#00000000_00000000_00000000_00100000);
+        SVCF := DWORD_TO_BOOL(ssm_transitions AND 2#00000000_00000000_00000000_01000000);
+        EMF :=  DWORD_TO_BOOL(ssm_transitions AND 2#00000000_00000000_00000000_10000000);
+        WDOx := DWORD_TO_BOOL(ssm_transitions AND 2#00000000_00000000_00000001_00000000);
+        RESx := DWORD_TO_BOOL(ssm_transitions AND 2#00000000_00000000_00000010_00000000);
+        BAD :=  DWORD_TO_BOOL(ssm_transitions AND 2#00000000_00000000_00000100_00000000);
+        
+
+        
 
   (* superstate transitions *)
   FOR col := 0 TO 10 DO
@@ -165,6 +179,23 @@ PROGRAM superstate_machine
     END_IF;
   END_FOR;
 
+END_PROGRAM
+
+PROGRAM failure
+  VAR_EXTERNAL
+    current_superstate : INT;
+    ssm_transitions : DWORD;
+  END_VAR
+
+  (* SEPNUTI SUPERSTAVU *)
+  IF current_superstate = 5 THEN
+    
+        (* VYNULUJE PRIZNAK PRETECENI TIMERU *)
+        ssm_transitions := ssm_transitions AND NOT 256;
+        
+        
+        
+  END_IF;
 END_PROGRAM
 
 PROGRAM watchdogtimer
@@ -186,15 +217,34 @@ PROGRAM autoproduction
     current_superstate : INT;
     sensor_output : DWORD;
     WDT : UINT;
-    ssm_transitions : WORD;
+    ssm_transitions : DWORD;
+    current_state : INT;
   END_VAR
   VAR
-    current_state : INT;
     column : INT;
+  END_VAR
+  VAR_EXTERNAL
+    out_Ap : BOOL;
+    out_Am : BOOL;
+    out_B : BOOL;
+    out_C : BOOL;
+    out_Dp : BOOL;
+    out_Dm : BOOL;
+  END_VAR
+  VAR
+    in_prox : BOOL;
+    in_a0 : BOOL;
+    in_a1 : BOOL;
+    in_b : BOOL;
+    in_c0 : BOOL;
+    in_c1 : BOOL;
+    in_d0 : BOOL;
+    in_d1 : BOOL;
   END_VAR
 
   (*TESTOVACÍ SEKVENCE - VÝSTUP ZE SENZORŮ*)
   (*
+  PRVNÍ NACTENÍ SENZORŮ --74
   VLOŽENÍ OBROBKU -- 202
   UPNUTÍ OBROBKU --170
   SPUŠTĚNÍ VŘETENE --186
@@ -257,7 +307,7 @@ PROGRAM autoproduction
 
   (*NAPLNĚNÍ MATICE VÝSTUPŮ*)
   (* ... A+ A- B C D+ D- 0 0   - JEDNOTLIVÉ BITY PŘEDSTAVUJÍCÍ AKTORY V TOMTO POŘADÍ*)
-  outputMatrix[0]  := 2#00000000_00000000_00000000_00000000; (*INICIÁLNÍ STAV, ŽÁDNÝ VÝSTUP NA AKTORY*)
+  outputMatrix[0]  := 2#00000000_00000000_00000000_01000100; (*INICIÁLNÍ STAV, ŽÁDNÝ VÝSTUP NA AKTORY*)
   outputMatrix[1]  := 2#00000000_00000000_00000000_10000000; (*UPNUTÍ OBROBKU*)
   outputMatrix[2]  := 2#00000000_00000000_00000000_00100000; (*SEPNUTÍ VŘETENE*)
   outputMatrix[3]  := 2#00000000_00000000_00000000_00110000; (*POSUV VŘETENE K OBROBKU*)
@@ -279,6 +329,16 @@ PROGRAM autoproduction
 
   (* ZDE JE KONTROLOVÁNO ZDA JSME V DANÉM SUPERSTAVU *)
   IF current_superstate = 1 THEN
+    
+        (* NAČTENÍ VSTUPŮ *)
+        in_prox := DWORD_TO_BOOL(sensor_output AND 2#00000000_00000000_00000000_10000000);
+        in_a0 := DWORD_TO_BOOL(sensor_output AND 2#00000000_00000000_00000000_01000000);
+        in_a1 := DWORD_TO_BOOL(sensor_output AND 2#00000000_00000000_00000000_00100000);
+        in_b := DWORD_TO_BOOL(sensor_output AND 2#00000000_00000000_00000000_00010000);
+        in_c0 := DWORD_TO_BOOL(sensor_output AND 2#00000000_00000000_00000000_00001000);
+        in_c1 := DWORD_TO_BOOL(sensor_output AND 2#00000000_00000000_00000000_00000100);
+        in_d0 := DWORD_TO_BOOL(sensor_output AND 2#00000000_00000000_00000000_00000010);
+        in_d1 := DWORD_TO_BOOL(sensor_output AND 2#00000000_00000000_00000000_00000001);
         
        
         
@@ -292,18 +352,26 @@ PROGRAM autoproduction
           END_IF;
         END_FOR;
         
-        (* actuator signal *)
+        (* ZÁPIS SIGNÁLU NA VÝSTUP *)
         controller_output := outputMatrix[current_state];
+        
+        (* ZÁPIS VÝSTUPU DO JEDNOTLIVÝCH PROMĚNNÝCH *)
+        out_Ap := DWORD_TO_BOOL(controller_output AND 2#00000000_00000000_00000000_10000000);
+        out_Am := DWORD_TO_BOOL(controller_output AND 2#00000000_00000000_00000000_01000000);
+        out_B := DWORD_TO_BOOL(controller_output AND 2#00000000_00000000_00000000_00100000);
+        out_C := DWORD_TO_BOOL(controller_output AND 2#00000000_00000000_00000000_00010000);
+        out_Dp := DWORD_TO_BOOL(controller_output AND 2#00000000_00000000_00000000_00001000);
+        out_Dm := DWORD_TO_BOOL(controller_output AND 2#00000000_00000000_00000000_00000100);
         
         (* watchdog timer  - KONTROLUJE ZDA NEDOŠLO K ZASEKNUTÍ*)                                                 
         IF WDT > 3000 THEN
           (* set failure symptome WDOx as true *)
-          ssm_transitions := ssm_transitions OR 256;
+          ssm_transitions := 256;
         END_IF;
         
        (* BYLO DOSAŽENO KONEČNÉHO STAVU SKOK DO IDDLE *)                                              
         IF current_state = 10 THEN
-          ssm_transitions := ssm_transitions OR 4;
+          ssm_transitions := 4;
           current_state := 0;
         END_IF;
         
@@ -321,27 +389,27 @@ PROGRAM manualproduction
     current_superstate : INT;
     sensor_output : DWORD;
     WDT : UINT;
-    ssm_transitions : WORD;
+    ssm_transitions : DWORD;
+    current_state : INT;
   END_VAR
   VAR
-    current_state : INT;
     column : INT;
   END_VAR
 
   (*TESTOVACÍ SEKVENCE - VÝSTUP ZE SENZORŮ*)
   (*
-  VLOŽENÍ OBROBKU -- x202 ->16777290
-  UPNUTÍ OBROBKU --x170 -> 16777418
-  SPUŠTĚNÍ VŘETENE --x186 -> 16777386
-  VYSUNUTÍ MOTORU C (VRTÁNÍ) --182
-  ZASUNUTÍ MOTORU C (VRTÁNÍ) --186
-  PRESUN OBROBKU DO DRUHÉ POLOHY --185
-  VYSUNUTÍ MOTORU C (VRTÁNÍ) --181
-  ZASUNUTÍ MOTORU C (VRTÁNÍ) --185
-  VYPNUTÍ VŘETENE --169
-  NÁVRAT DO PŮVODNÍ POLOHY --170
-  UVOLNĚNÍ OBROBKU --202
-  ODEBRÁNÍ OBROBKU --74
+  VLOŽENÍ OBROBKU -- x202 ->16777418
+  UPNUTÍ OBROBKU --x170 -> 16777386
+  SPUŠTĚNÍ VŘETENE --x186 -> 16777402
+  VYSUNUTÍ MOTORU C (VRTÁNÍ) --x182 -> 16777398
+  ZASUNUTÍ MOTORU C (VRTÁNÍ) --x186 -> 16777402
+  PRESUN OBROBKU DO DRUHÉ POLOHY --x185 ->16777401
+  VYSUNUTÍ MOTORU C (VRTÁNÍ) --x181 ->16777397
+  ZASUNUTÍ MOTORU C (VRTÁNÍ) --x185 -> 16777401
+  VYPNUTÍ VŘETENE --x169 -> 16777385
+  NÁVRAT DO PŮVODNÍ POLOHY --x170 ->16777386
+  UVOLNĚNÍ OBROBKU --16777418
+  ODEBRÁNÍ OBROBKU --16777290
   *)
 
   VAR
@@ -430,17 +498,76 @@ PROGRAM manualproduction
         (* actuator signal *)
         controller_output := outputMatrix[current_state];
         
-        IF WDT > 3000 THEN
-          (* set failure symptome WDOx as true *)
-          WDT := 0;
-        END_IF;
         
         
        (* BYLO DOSAŽENO KONEČNÉHO STAVU SKOK DO IDDLE *)                                              
         IF current_state = 10 THEN
-          ssm_transitions := ssm_transitions OR 4;
+          ssm_transitions := 4;
           current_state := 0;
         END_IF;
+        
+  END_IF;
+END_PROGRAM
+
+PROGRAM emerigency
+  VAR
+    outputMatrix : ARRAY [0..10] OF DWORD;
+  END_VAR
+  VAR_EXTERNAL
+    controller_output : DWORD;
+    current_superstate : INT;
+    sensor_output : DWORD;
+    ssm_transitions : DWORD;
+    current_state : INT;
+    out_Ap : BOOL;
+    out_Am : BOOL;
+    out_B : BOOL;
+    out_C : BOOL;
+    out_Dp : BOOL;
+    out_Dm : BOOL;
+  END_VAR
+  VAR
+    out_preasure_off : BOOL;
+  END_VAR
+
+
+
+  (*NAPLNĚNÍ MATICE VÝSTUPŮ*)
+  (* ... A+ A- B C D+ D- 0 preasure_off   - JEDNOTLIVÉ BITY PŘEDSTAVUJÍCÍ AKTORY V TOMTO POŘADÍ*)
+  outputMatrix[0]  := 2#00000000_00000000_00000000_00000001; (*INICIÁLNÍ STAV - vypne tlak*)
+  outputMatrix[1]  := 2#00000000_00000000_00000000_01000000; (*UPNUTÍ OBROBKU - ZASUNU MOTOR A ZPET*)
+  outputMatrix[2]  := 2#00000000_00000000_00000000_00000000; (*SEPNUTÍ VŘETENE - VYPNU VRETENO*)
+  outputMatrix[3]  := 2#00000000_00000000_00000000_00000000; (*POSUV VŘETENE K OBROBKU - VRATIM POSUV A VYPNU VRETENO*)
+  outputMatrix[4]  := 2#00000000_00000000_00000000_00000001; (*POSUV VŘETENE OD OBROBKU - VYPNU TLAK*)
+  outputMatrix[5]  := 2#00000000_00000000_00000000_00000100; (*PŘESUNUTÍ OBROBKU DO DRUHÉ POLOHY - PRESUNU ZPET,VYPNU VRETENO*)
+  outputMatrix[6]  := 2#00000000_00000000_00000000_00000001; (*VYPNUTÍ VŘETENE - VYPNU TLAK, NEMUZE NASTAT DALSI KROK*)
+  outputMatrix[7]  := 2#00000000_00000000_00000000_00001000; (*NÁVRAT OBROBKU DO PŮVODNÍ POLOHY - OBRATIM CHOD MOTORU*)
+  outputMatrix[8]  := 2#00000000_00000000_00000000_10000000; (*UVOLNĚNÍ OBROBKU - OBRATIM CHOD MOTORU*)
+  outputMatrix[9]  := 2#00000000_00000000_00000000_00000001; (*ČEKÁNÍ NA ODEBRÁNÍ OBROBKU - VYPNU TLAK*)
+
+
+
+
+
+
+
+
+
+
+  (* ZDE JE KONTROLOVÁNO ZDA JSME V DANÉM SUPERSTAVU *)
+  IF current_superstate = 4 THEN
+        
+        
+        (* ZÁPIS SIGNÁLU NA VÝSTUP *)
+        controller_output := outputMatrix[current_state];
+        
+        (* ZÁPIS VÝSTUPU DO JEDNOTLIVÝCH PROMĚNNÝCH *)
+        out_Ap := DWORD_TO_BOOL(controller_output AND 2#00000000_00000000_00000000_10000000);
+        out_Am := DWORD_TO_BOOL(controller_output AND 2#00000000_00000000_00000000_01000000);
+        out_B := DWORD_TO_BOOL(controller_output AND 2#00000000_00000000_00000000_00100000);
+        out_C := DWORD_TO_BOOL(controller_output AND 2#00000000_00000000_00000000_00010000);
+        out_Dp := DWORD_TO_BOOL(controller_output AND 2#00000000_00000000_00000000_00001000);
+        out_Dm := DWORD_TO_BOOL(controller_output AND 2#00000000_00000000_00000000_00000100);
         
   END_IF;
 END_PROGRAM
@@ -451,14 +578,23 @@ CONFIGURATION Config0
     controller_output : DWORD;
     WDT : UINT;
     current_superstate : INT;
+    current_state : INT;
     sensor_output : DWORD;
-    ssm_transitions : WORD;
+    ssm_transitions : DWORD;
+    out_Ap : BOOL;
+    out_Am : BOOL;
+    out_B : BOOL;
+    out_C : BOOL;
+    out_Dp : BOOL;
+    out_Dm : BOOL;
+    out_preasure_off : BOOL;
   END_VAR
 
   RESOURCE Res0 ON PLC
     TASK task0(INTERVAL := T#100ms,PRIORITY := 0);
     TASK WDT_clock(INTERVAL := T#10ms,PRIORITY := 0);
     PROGRAM SSM WITH task0 : superstate_machine;
+    PROGRAM EM WITH task0 : emerigency;
     PROGRAM AP WITH task0 : autoproduction;
     PROGRAM MP WITH task0 : manualproduction;
     PROGRAM FAIL WITH task0 : failure;

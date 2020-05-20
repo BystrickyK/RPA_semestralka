@@ -200,9 +200,106 @@ __end:
 
 
 
+void SUPERSTATE_MACHINE_init__(SUPERSTATE_MACHINE *data__, BOOL retain) {
+  __INIT_EXTERNAL(DWORD,SSM_TRANSITIONS,data__->SSM_TRANSITIONS,retain)
+  __INIT_EXTERNAL(INT,CURRENT_SUPERSTATE,data__->CURRENT_SUPERSTATE,retain)
+  __INIT_EXTERNAL(UINT,WDT,data__->WDT,retain)
+  __INIT_VAR(data__->COL,0,retain)
+  __INIT_VAR(data__->TMP1,0,retain)
+  __INIT_VAR(data__->TMP2,0,retain)
+  __INIT_VAR(data__->TMP3,123,retain)
+  __INIT_EXTERNAL(DWORD,SENSOR_OUTPUT,data__->SENSOR_OUTPUT,retain)
+  __INIT_VAR(data__->EM,__BOOL_LITERAL(FALSE),retain)
+  __INIT_VAR(data__->SAP,__BOOL_LITERAL(FALSE),retain)
+  __INIT_VAR(data__->APF,__BOOL_LITERAL(FALSE),retain)
+  __INIT_VAR(data__->SMP,__BOOL_LITERAL(FALSE),retain)
+  __INIT_VAR(data__->MPF,__BOOL_LITERAL(FALSE),retain)
+  __INIT_VAR(data__->SSVC,__BOOL_LITERAL(FALSE),retain)
+  __INIT_VAR(data__->SVCF,__BOOL_LITERAL(FALSE),retain)
+  __INIT_VAR(data__->EMF,__BOOL_LITERAL(FALSE),retain)
+  __INIT_VAR(data__->WDOX,__BOOL_LITERAL(FALSE),retain)
+  __INIT_VAR(data__->RESX,__BOOL_LITERAL(FALSE),retain)
+  __INIT_VAR(data__->BAD,__BOOL_LITERAL(FALSE),retain)
+  {
+    static const __ARRAY_OF_INT_6_11 temp = {{4,1,-1,2,-1,3,-1,-1,-1,-1,-1,4,-1,0,-1,-1,-1,-1,-1,5,-1,-1,4,-1,-1,-1,0,-1,-1,-1,-1,-1,-1,4,-1,-1,-1,-1,-1,0,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,0,-1,-1,-1,4,-1,-1,-1,-1,-1,-1,-1,-1,1,3}};
+    __SET_VAR(data__->,TRANSITION_MATRIX,,temp);
+  }
+  {
+    static const __ARRAY_OF_DWORD_11 temp = {{0x00000001,0x00000002,0x00000004,0x00000008,0x00000010,0x00000020,0x00000040,0x00000080,0x00000100,0x00000200,0x00000400}};
+    __SET_VAR(data__->,TRANSITION_MASKS,,temp);
+  }
+}
+
+// Code part
+void SUPERSTATE_MACHINE_body__(SUPERSTATE_MACHINE *data__) {
+  // Initialise TEMP variables
+
+  __SET_VAR(data__->,EM,,DWORD_TO_BOOL(
+    (BOOL)__BOOL_LITERAL(TRUE),
+    NULL,
+    (DWORD)(__GET_EXTERNAL(data__->SSM_TRANSITIONS,) & 0x00000001)));
+  __SET_VAR(data__->,SAP,,DWORD_TO_BOOL(
+    (BOOL)__BOOL_LITERAL(TRUE),
+    NULL,
+    (DWORD)(__GET_EXTERNAL(data__->SSM_TRANSITIONS,) & 0x00000002)));
+  __SET_VAR(data__->,APF,,DWORD_TO_BOOL(
+    (BOOL)__BOOL_LITERAL(TRUE),
+    NULL,
+    (DWORD)(__GET_EXTERNAL(data__->SSM_TRANSITIONS,) & 0x00000004)));
+  __SET_VAR(data__->,SMP,,DWORD_TO_BOOL(
+    (BOOL)__BOOL_LITERAL(TRUE),
+    NULL,
+    (DWORD)(__GET_EXTERNAL(data__->SSM_TRANSITIONS,) & 0x00000008)));
+  __SET_VAR(data__->,MPF,,DWORD_TO_BOOL(
+    (BOOL)__BOOL_LITERAL(TRUE),
+    NULL,
+    (DWORD)(__GET_EXTERNAL(data__->SSM_TRANSITIONS,) & 0x00000010)));
+  __SET_VAR(data__->,SSVC,,DWORD_TO_BOOL(
+    (BOOL)__BOOL_LITERAL(TRUE),
+    NULL,
+    (DWORD)(__GET_EXTERNAL(data__->SSM_TRANSITIONS,) & 0x00000020)));
+  __SET_VAR(data__->,SVCF,,DWORD_TO_BOOL(
+    (BOOL)__BOOL_LITERAL(TRUE),
+    NULL,
+    (DWORD)(__GET_EXTERNAL(data__->SSM_TRANSITIONS,) & 0x00000040)));
+  __SET_VAR(data__->,EMF,,DWORD_TO_BOOL(
+    (BOOL)__BOOL_LITERAL(TRUE),
+    NULL,
+    (DWORD)(__GET_EXTERNAL(data__->SSM_TRANSITIONS,) & 0x00000080)));
+  __SET_VAR(data__->,WDOX,,DWORD_TO_BOOL(
+    (BOOL)__BOOL_LITERAL(TRUE),
+    NULL,
+    (DWORD)(__GET_EXTERNAL(data__->SSM_TRANSITIONS,) & 0x00000100)));
+  __SET_VAR(data__->,RESX,,DWORD_TO_BOOL(
+    (BOOL)__BOOL_LITERAL(TRUE),
+    NULL,
+    (DWORD)(__GET_EXTERNAL(data__->SSM_TRANSITIONS,) & 0x00000200)));
+  __SET_VAR(data__->,BAD,,DWORD_TO_BOOL(
+    (BOOL)__BOOL_LITERAL(TRUE),
+    NULL,
+    (DWORD)(__GET_EXTERNAL(data__->SSM_TRANSITIONS,) & 0x00000400)));
+  for(__GET_VAR(data__->COL,) = 0; __GET_VAR(data__->COL,) <= 10; __GET_VAR(data__->COL,)++) {
+    if ((__GET_VAR(data__->TRANSITION_MATRIX,.table[(__GET_EXTERNAL(data__->CURRENT_SUPERSTATE,)) - (0)][(__GET_VAR(data__->COL,)) - (0)]) != -1)) {
+      if (((__GET_EXTERNAL(data__->SSM_TRANSITIONS,) & __GET_VAR(data__->TRANSITION_MASKS,.table[(__GET_VAR(data__->COL,)) - (0)])) == __GET_VAR(data__->TRANSITION_MASKS,.table[(__GET_VAR(data__->COL,)) - (0)]))) {
+        __SET_EXTERNAL(data__->,CURRENT_SUPERSTATE,,__GET_VAR(data__->TRANSITION_MATRIX,.table[(__GET_EXTERNAL(data__->CURRENT_SUPERSTATE,)) - (0)][(__GET_VAR(data__->COL,)) - (0)]));
+        __SET_EXTERNAL(data__->,WDT,,0);
+      };
+    };
+  };
+
+  goto __end;
+
+__end:
+  return;
+} // SUPERSTATE_MACHINE_body__() 
+
+
+
+
+
 void FAILURE_init__(FAILURE *data__, BOOL retain) {
   __INIT_EXTERNAL(INT,CURRENT_SUPERSTATE,data__->CURRENT_SUPERSTATE,retain)
-  __INIT_EXTERNAL(WORD,SSM_TRANSITIONS,data__->SSM_TRANSITIONS,retain)
+  __INIT_EXTERNAL(DWORD,SSM_TRANSITIONS,data__->SSM_TRANSITIONS,retain)
 }
 
 // Code part
@@ -218,48 +315,6 @@ void FAILURE_body__(FAILURE *data__) {
 __end:
   return;
 } // FAILURE_body__() 
-
-
-
-
-
-void SUPERSTATE_MACHINE_init__(SUPERSTATE_MACHINE *data__, BOOL retain) {
-  __INIT_EXTERNAL(WORD,SSM_TRANSITIONS,data__->SSM_TRANSITIONS,retain)
-  __INIT_EXTERNAL(INT,CURRENT_SUPERSTATE,data__->CURRENT_SUPERSTATE,retain)
-  __INIT_EXTERNAL(UINT,WDT,data__->WDT,retain)
-  __INIT_VAR(data__->COL,0,retain)
-  __INIT_VAR(data__->TMP1,0,retain)
-  __INIT_VAR(data__->TMP2,0,retain)
-  __INIT_VAR(data__->TMP3,123,retain)
-  __INIT_EXTERNAL(DWORD,SENSOR_OUTPUT,data__->SENSOR_OUTPUT,retain)
-  {
-    static const __ARRAY_OF_INT_6_11 temp = {{4,1,-1,2,-1,3,-1,-1,-1,-1,-1,4,-1,0,-1,-1,-1,-1,-1,5,-1,-1,4,-1,-1,-1,0,-1,-1,-1,-1,-1,-1,4,-1,-1,-1,-1,-1,0,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,0,-1,-1,-1,4,-1,-1,-1,-1,-1,-1,-1,-1,1,3}};
-    __SET_VAR(data__->,TRANSITION_MATRIX,,temp);
-  }
-  {
-    static const __ARRAY_OF_WORD_11 temp = {{0x0001,0x0002,0x0004,0x0008,0x0010,0x0020,0x0040,0x0080,0x0100,0x0200,0x0400}};
-    __SET_VAR(data__->,TRANSITION_MASKS,,temp);
-  }
-}
-
-// Code part
-void SUPERSTATE_MACHINE_body__(SUPERSTATE_MACHINE *data__) {
-  // Initialise TEMP variables
-
-  for(__GET_VAR(data__->COL,) = 0; __GET_VAR(data__->COL,) <= 10; __GET_VAR(data__->COL,)++) {
-    if ((__GET_VAR(data__->TRANSITION_MATRIX,.table[(__GET_EXTERNAL(data__->CURRENT_SUPERSTATE,)) - (0)][(__GET_VAR(data__->COL,)) - (0)]) != -1)) {
-      if (((__GET_EXTERNAL(data__->SSM_TRANSITIONS,) & __GET_VAR(data__->TRANSITION_MASKS,.table[(__GET_VAR(data__->COL,)) - (0)])) == __GET_VAR(data__->TRANSITION_MASKS,.table[(__GET_VAR(data__->COL,)) - (0)]))) {
-        __SET_EXTERNAL(data__->,CURRENT_SUPERSTATE,,__GET_VAR(data__->TRANSITION_MATRIX,.table[(__GET_EXTERNAL(data__->CURRENT_SUPERSTATE,)) - (0)][(__GET_VAR(data__->COL,)) - (0)]));
-        __SET_EXTERNAL(data__->,WDT,,0);
-      };
-    };
-  };
-
-  goto __end;
-
-__end:
-  return;
-} // SUPERSTATE_MACHINE_body__() 
 
 
 
@@ -302,9 +357,23 @@ void AUTOPRODUCTION_init__(AUTOPRODUCTION *data__, BOOL retain) {
   __INIT_EXTERNAL(INT,CURRENT_SUPERSTATE,data__->CURRENT_SUPERSTATE,retain)
   __INIT_EXTERNAL(DWORD,SENSOR_OUTPUT,data__->SENSOR_OUTPUT,retain)
   __INIT_EXTERNAL(UINT,WDT,data__->WDT,retain)
-  __INIT_EXTERNAL(WORD,SSM_TRANSITIONS,data__->SSM_TRANSITIONS,retain)
-  __INIT_VAR(data__->CURRENT_STATE,0,retain)
+  __INIT_EXTERNAL(DWORD,SSM_TRANSITIONS,data__->SSM_TRANSITIONS,retain)
+  __INIT_EXTERNAL(INT,CURRENT_STATE,data__->CURRENT_STATE,retain)
   __INIT_VAR(data__->COLUMN,0,retain)
+  __INIT_EXTERNAL(BOOL,OUT_AP,data__->OUT_AP,retain)
+  __INIT_EXTERNAL(BOOL,OUT_AM,data__->OUT_AM,retain)
+  __INIT_EXTERNAL(BOOL,OUT_B,data__->OUT_B,retain)
+  __INIT_EXTERNAL(BOOL,OUT_C,data__->OUT_C,retain)
+  __INIT_EXTERNAL(BOOL,OUT_DP,data__->OUT_DP,retain)
+  __INIT_EXTERNAL(BOOL,OUT_DM,data__->OUT_DM,retain)
+  __INIT_VAR(data__->IN_PROX,__BOOL_LITERAL(FALSE),retain)
+  __INIT_VAR(data__->IN_A0,__BOOL_LITERAL(FALSE),retain)
+  __INIT_VAR(data__->IN_A1,__BOOL_LITERAL(FALSE),retain)
+  __INIT_VAR(data__->IN_B,__BOOL_LITERAL(FALSE),retain)
+  __INIT_VAR(data__->IN_C0,__BOOL_LITERAL(FALSE),retain)
+  __INIT_VAR(data__->IN_C1,__BOOL_LITERAL(FALSE),retain)
+  __INIT_VAR(data__->IN_D0,__BOOL_LITERAL(FALSE),retain)
+  __INIT_VAR(data__->IN_D1,__BOOL_LITERAL(FALSE),retain)
   {
     static const __ARRAY_OF_INT_11_11 temp = {{1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,2,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,3,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,4,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,5,-1,6,-1,-1,-1,-1,-1,-1,-1,-1,-1,3,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,7,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,8,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,9,-1,10,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1}};
     __SET_VAR(data__->,TRANSITIONMATRIX,,temp);
@@ -337,7 +406,7 @@ void AUTOPRODUCTION_body__(AUTOPRODUCTION *data__) {
   __SET_VAR(data__->,VALUEMATRIX,.table[(8) - (0)],0x00000000);
   __SET_VAR(data__->,VALUEMATRIX,.table[(9) - (0)],0x00000002);
   __SET_VAR(data__->,VALUEMATRIX,.table[(10) - (0)],0x00000040);
-  __SET_VAR(data__->,OUTPUTMATRIX,.table[(0) - (0)],0x00000000);
+  __SET_VAR(data__->,OUTPUTMATRIX,.table[(0) - (0)],0x00000044);
   __SET_VAR(data__->,OUTPUTMATRIX,.table[(1) - (0)],0x00000080);
   __SET_VAR(data__->,OUTPUTMATRIX,.table[(2) - (0)],0x00000020);
   __SET_VAR(data__->,OUTPUTMATRIX,.table[(3) - (0)],0x00000030);
@@ -348,21 +417,77 @@ void AUTOPRODUCTION_body__(AUTOPRODUCTION *data__) {
   __SET_VAR(data__->,OUTPUTMATRIX,.table[(8) - (0)],0x00000040);
   __SET_VAR(data__->,OUTPUTMATRIX,.table[(9) - (0)],0x00000000);
   if ((__GET_EXTERNAL(data__->CURRENT_SUPERSTATE,) == 1)) {
+    __SET_VAR(data__->,IN_PROX,,DWORD_TO_BOOL(
+      (BOOL)__BOOL_LITERAL(TRUE),
+      NULL,
+      (DWORD)(__GET_EXTERNAL(data__->SENSOR_OUTPUT,) & 0x00000080)));
+    __SET_VAR(data__->,IN_A0,,DWORD_TO_BOOL(
+      (BOOL)__BOOL_LITERAL(TRUE),
+      NULL,
+      (DWORD)(__GET_EXTERNAL(data__->SENSOR_OUTPUT,) & 0x00000040)));
+    __SET_VAR(data__->,IN_A1,,DWORD_TO_BOOL(
+      (BOOL)__BOOL_LITERAL(TRUE),
+      NULL,
+      (DWORD)(__GET_EXTERNAL(data__->SENSOR_OUTPUT,) & 0x00000020)));
+    __SET_VAR(data__->,IN_B,,DWORD_TO_BOOL(
+      (BOOL)__BOOL_LITERAL(TRUE),
+      NULL,
+      (DWORD)(__GET_EXTERNAL(data__->SENSOR_OUTPUT,) & 0x00000010)));
+    __SET_VAR(data__->,IN_C0,,DWORD_TO_BOOL(
+      (BOOL)__BOOL_LITERAL(TRUE),
+      NULL,
+      (DWORD)(__GET_EXTERNAL(data__->SENSOR_OUTPUT,) & 0x00000008)));
+    __SET_VAR(data__->,IN_C1,,DWORD_TO_BOOL(
+      (BOOL)__BOOL_LITERAL(TRUE),
+      NULL,
+      (DWORD)(__GET_EXTERNAL(data__->SENSOR_OUTPUT,) & 0x00000004)));
+    __SET_VAR(data__->,IN_D0,,DWORD_TO_BOOL(
+      (BOOL)__BOOL_LITERAL(TRUE),
+      NULL,
+      (DWORD)(__GET_EXTERNAL(data__->SENSOR_OUTPUT,) & 0x00000002)));
+    __SET_VAR(data__->,IN_D1,,DWORD_TO_BOOL(
+      (BOOL)__BOOL_LITERAL(TRUE),
+      NULL,
+      (DWORD)(__GET_EXTERNAL(data__->SENSOR_OUTPUT,) & 0x00000001)));
     for(__GET_VAR(data__->COLUMN,) = 0; __GET_VAR(data__->COLUMN,) <= 10; __GET_VAR(data__->COLUMN,)++) {
-      if ((__GET_VAR(data__->TRANSITIONMATRIX,.table[(__GET_VAR(data__->CURRENT_STATE,)) - (0)][(__GET_VAR(data__->COLUMN,)) - (0)]) != -1)) {
+      if ((__GET_VAR(data__->TRANSITIONMATRIX,.table[(__GET_EXTERNAL(data__->CURRENT_STATE,)) - (0)][(__GET_VAR(data__->COLUMN,)) - (0)]) != -1)) {
         if (((__GET_EXTERNAL(data__->SENSOR_OUTPUT,) & __GET_VAR(data__->MASKMATRIX,.table[(__GET_VAR(data__->COLUMN,)) - (0)])) == __GET_VAR(data__->VALUEMATRIX,.table[(__GET_VAR(data__->COLUMN,)) - (0)]))) {
-          __SET_VAR(data__->,CURRENT_STATE,,__GET_VAR(data__->TRANSITIONMATRIX,.table[(__GET_VAR(data__->CURRENT_STATE,)) - (0)][(__GET_VAR(data__->COLUMN,)) - (0)]));
+          __SET_EXTERNAL(data__->,CURRENT_STATE,,__GET_VAR(data__->TRANSITIONMATRIX,.table[(__GET_EXTERNAL(data__->CURRENT_STATE,)) - (0)][(__GET_VAR(data__->COLUMN,)) - (0)]));
           __SET_EXTERNAL(data__->,WDT,,0);
         };
       };
     };
-    __SET_EXTERNAL(data__->,CONTROLLER_OUTPUT,,__GET_VAR(data__->OUTPUTMATRIX,.table[(__GET_VAR(data__->CURRENT_STATE,)) - (0)]));
+    __SET_EXTERNAL(data__->,CONTROLLER_OUTPUT,,__GET_VAR(data__->OUTPUTMATRIX,.table[(__GET_EXTERNAL(data__->CURRENT_STATE,)) - (0)]));
+    __SET_EXTERNAL(data__->,OUT_AP,,DWORD_TO_BOOL(
+      (BOOL)__BOOL_LITERAL(TRUE),
+      NULL,
+      (DWORD)(__GET_EXTERNAL(data__->CONTROLLER_OUTPUT,) & 0x00000080)));
+    __SET_EXTERNAL(data__->,OUT_AM,,DWORD_TO_BOOL(
+      (BOOL)__BOOL_LITERAL(TRUE),
+      NULL,
+      (DWORD)(__GET_EXTERNAL(data__->CONTROLLER_OUTPUT,) & 0x00000040)));
+    __SET_EXTERNAL(data__->,OUT_B,,DWORD_TO_BOOL(
+      (BOOL)__BOOL_LITERAL(TRUE),
+      NULL,
+      (DWORD)(__GET_EXTERNAL(data__->CONTROLLER_OUTPUT,) & 0x00000020)));
+    __SET_EXTERNAL(data__->,OUT_C,,DWORD_TO_BOOL(
+      (BOOL)__BOOL_LITERAL(TRUE),
+      NULL,
+      (DWORD)(__GET_EXTERNAL(data__->CONTROLLER_OUTPUT,) & 0x00000010)));
+    __SET_EXTERNAL(data__->,OUT_DP,,DWORD_TO_BOOL(
+      (BOOL)__BOOL_LITERAL(TRUE),
+      NULL,
+      (DWORD)(__GET_EXTERNAL(data__->CONTROLLER_OUTPUT,) & 0x00000008)));
+    __SET_EXTERNAL(data__->,OUT_DM,,DWORD_TO_BOOL(
+      (BOOL)__BOOL_LITERAL(TRUE),
+      NULL,
+      (DWORD)(__GET_EXTERNAL(data__->CONTROLLER_OUTPUT,) & 0x00000004)));
     if ((__GET_EXTERNAL(data__->WDT,) > 3000)) {
-      __SET_EXTERNAL(data__->,SSM_TRANSITIONS,,(__GET_EXTERNAL(data__->SSM_TRANSITIONS,) | 256));
+      __SET_EXTERNAL(data__->,SSM_TRANSITIONS,,256);
     };
-    if ((__GET_VAR(data__->CURRENT_STATE,) == 10)) {
-      __SET_EXTERNAL(data__->,SSM_TRANSITIONS,,(__GET_EXTERNAL(data__->SSM_TRANSITIONS,) | 4));
-      __SET_VAR(data__->,CURRENT_STATE,,0);
+    if ((__GET_EXTERNAL(data__->CURRENT_STATE,) == 10)) {
+      __SET_EXTERNAL(data__->,SSM_TRANSITIONS,,4);
+      __SET_EXTERNAL(data__->,CURRENT_STATE,,0);
     };
   };
 
@@ -393,8 +518,8 @@ void MANUALPRODUCTION_init__(MANUALPRODUCTION *data__, BOOL retain) {
   __INIT_EXTERNAL(INT,CURRENT_SUPERSTATE,data__->CURRENT_SUPERSTATE,retain)
   __INIT_EXTERNAL(DWORD,SENSOR_OUTPUT,data__->SENSOR_OUTPUT,retain)
   __INIT_EXTERNAL(UINT,WDT,data__->WDT,retain)
-  __INIT_EXTERNAL(WORD,SSM_TRANSITIONS,data__->SSM_TRANSITIONS,retain)
-  __INIT_VAR(data__->CURRENT_STATE,0,retain)
+  __INIT_EXTERNAL(DWORD,SSM_TRANSITIONS,data__->SSM_TRANSITIONS,retain)
+  __INIT_EXTERNAL(INT,CURRENT_STATE,data__->CURRENT_STATE,retain)
   __INIT_VAR(data__->COLUMN,0,retain)
   {
     static const __ARRAY_OF_INT_11_11 temp = {{1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,2,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,3,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,4,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,5,-1,6,-1,-1,-1,-1,-1,-1,-1,-1,-1,3,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,7,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,8,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,9,-1,10,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1}};
@@ -440,20 +565,17 @@ void MANUALPRODUCTION_body__(MANUALPRODUCTION *data__) {
   __SET_VAR(data__->,OUTPUTMATRIX,.table[(9) - (0)],0x00000000);
   if ((__GET_EXTERNAL(data__->CURRENT_SUPERSTATE,) == 2)) {
     for(__GET_VAR(data__->COLUMN,) = 0; __GET_VAR(data__->COLUMN,) <= 10; __GET_VAR(data__->COLUMN,)++) {
-      if ((__GET_VAR(data__->TRANSITIONMATRIXMP,.table[(__GET_VAR(data__->CURRENT_STATE,)) - (0)][(__GET_VAR(data__->COLUMN,)) - (0)]) != -1)) {
+      if ((__GET_VAR(data__->TRANSITIONMATRIXMP,.table[(__GET_EXTERNAL(data__->CURRENT_STATE,)) - (0)][(__GET_VAR(data__->COLUMN,)) - (0)]) != -1)) {
         if (((__GET_EXTERNAL(data__->SENSOR_OUTPUT,) & __GET_VAR(data__->MASKMATRIX,.table[(__GET_VAR(data__->COLUMN,)) - (0)])) == __GET_VAR(data__->VALUEMATRIX,.table[(__GET_VAR(data__->COLUMN,)) - (0)]))) {
-          __SET_VAR(data__->,CURRENT_STATE,,__GET_VAR(data__->TRANSITIONMATRIXMP,.table[(__GET_VAR(data__->CURRENT_STATE,)) - (0)][(__GET_VAR(data__->COLUMN,)) - (0)]));
+          __SET_EXTERNAL(data__->,CURRENT_STATE,,__GET_VAR(data__->TRANSITIONMATRIXMP,.table[(__GET_EXTERNAL(data__->CURRENT_STATE,)) - (0)][(__GET_VAR(data__->COLUMN,)) - (0)]));
           __SET_EXTERNAL(data__->,WDT,,0);
         };
       };
     };
-    __SET_EXTERNAL(data__->,CONTROLLER_OUTPUT,,__GET_VAR(data__->OUTPUTMATRIX,.table[(__GET_VAR(data__->CURRENT_STATE,)) - (0)]));
-    if ((__GET_EXTERNAL(data__->WDT,) > 3000)) {
-      __SET_EXTERNAL(data__->,WDT,,0);
-    };
-    if ((__GET_VAR(data__->CURRENT_STATE,) == 10)) {
-      __SET_EXTERNAL(data__->,SSM_TRANSITIONS,,(__GET_EXTERNAL(data__->SSM_TRANSITIONS,) | 4));
-      __SET_VAR(data__->,CURRENT_STATE,,0);
+    __SET_EXTERNAL(data__->,CONTROLLER_OUTPUT,,__GET_VAR(data__->OUTPUTMATRIX,.table[(__GET_EXTERNAL(data__->CURRENT_STATE,)) - (0)]));
+    if ((__GET_EXTERNAL(data__->CURRENT_STATE,) == 10)) {
+      __SET_EXTERNAL(data__->,SSM_TRANSITIONS,,4);
+      __SET_EXTERNAL(data__->,CURRENT_STATE,,0);
     };
   };
 
@@ -462,6 +584,77 @@ void MANUALPRODUCTION_body__(MANUALPRODUCTION *data__) {
 __end:
   return;
 } // MANUALPRODUCTION_body__() 
+
+
+
+
+
+void EMERIGENCY_init__(EMERIGENCY *data__, BOOL retain) {
+  
+  {
+    static const __ARRAY_OF_DWORD_11 temp = {{0,0,0,0,0,0,0,0,0,0,0}};
+    __SET_VAR(data__->,OUTPUTMATRIX,,temp);
+  }__INIT_EXTERNAL(DWORD,CONTROLLER_OUTPUT,data__->CONTROLLER_OUTPUT,retain)
+  __INIT_EXTERNAL(INT,CURRENT_SUPERSTATE,data__->CURRENT_SUPERSTATE,retain)
+  __INIT_EXTERNAL(DWORD,SENSOR_OUTPUT,data__->SENSOR_OUTPUT,retain)
+  __INIT_EXTERNAL(DWORD,SSM_TRANSITIONS,data__->SSM_TRANSITIONS,retain)
+  __INIT_EXTERNAL(INT,CURRENT_STATE,data__->CURRENT_STATE,retain)
+  __INIT_EXTERNAL(BOOL,OUT_AP,data__->OUT_AP,retain)
+  __INIT_EXTERNAL(BOOL,OUT_AM,data__->OUT_AM,retain)
+  __INIT_EXTERNAL(BOOL,OUT_B,data__->OUT_B,retain)
+  __INIT_EXTERNAL(BOOL,OUT_C,data__->OUT_C,retain)
+  __INIT_EXTERNAL(BOOL,OUT_DP,data__->OUT_DP,retain)
+  __INIT_EXTERNAL(BOOL,OUT_DM,data__->OUT_DM,retain)
+  __INIT_VAR(data__->OUT_PREASURE_OFF,__BOOL_LITERAL(FALSE),retain)
+}
+
+// Code part
+void EMERIGENCY_body__(EMERIGENCY *data__) {
+  // Initialise TEMP variables
+
+  __SET_VAR(data__->,OUTPUTMATRIX,.table[(0) - (0)],0x00000001);
+  __SET_VAR(data__->,OUTPUTMATRIX,.table[(1) - (0)],0x00000040);
+  __SET_VAR(data__->,OUTPUTMATRIX,.table[(2) - (0)],0x00000000);
+  __SET_VAR(data__->,OUTPUTMATRIX,.table[(3) - (0)],0x00000000);
+  __SET_VAR(data__->,OUTPUTMATRIX,.table[(4) - (0)],0x00000001);
+  __SET_VAR(data__->,OUTPUTMATRIX,.table[(5) - (0)],0x00000004);
+  __SET_VAR(data__->,OUTPUTMATRIX,.table[(6) - (0)],0x00000001);
+  __SET_VAR(data__->,OUTPUTMATRIX,.table[(7) - (0)],0x00000008);
+  __SET_VAR(data__->,OUTPUTMATRIX,.table[(8) - (0)],0x00000080);
+  __SET_VAR(data__->,OUTPUTMATRIX,.table[(9) - (0)],0x00000001);
+  if ((__GET_EXTERNAL(data__->CURRENT_SUPERSTATE,) == 4)) {
+    __SET_EXTERNAL(data__->,CONTROLLER_OUTPUT,,__GET_VAR(data__->OUTPUTMATRIX,.table[(__GET_EXTERNAL(data__->CURRENT_STATE,)) - (0)]));
+    __SET_EXTERNAL(data__->,OUT_AP,,DWORD_TO_BOOL(
+      (BOOL)__BOOL_LITERAL(TRUE),
+      NULL,
+      (DWORD)(__GET_EXTERNAL(data__->CONTROLLER_OUTPUT,) & 0x00000080)));
+    __SET_EXTERNAL(data__->,OUT_AM,,DWORD_TO_BOOL(
+      (BOOL)__BOOL_LITERAL(TRUE),
+      NULL,
+      (DWORD)(__GET_EXTERNAL(data__->CONTROLLER_OUTPUT,) & 0x00000040)));
+    __SET_EXTERNAL(data__->,OUT_B,,DWORD_TO_BOOL(
+      (BOOL)__BOOL_LITERAL(TRUE),
+      NULL,
+      (DWORD)(__GET_EXTERNAL(data__->CONTROLLER_OUTPUT,) & 0x00000020)));
+    __SET_EXTERNAL(data__->,OUT_C,,DWORD_TO_BOOL(
+      (BOOL)__BOOL_LITERAL(TRUE),
+      NULL,
+      (DWORD)(__GET_EXTERNAL(data__->CONTROLLER_OUTPUT,) & 0x00000010)));
+    __SET_EXTERNAL(data__->,OUT_DP,,DWORD_TO_BOOL(
+      (BOOL)__BOOL_LITERAL(TRUE),
+      NULL,
+      (DWORD)(__GET_EXTERNAL(data__->CONTROLLER_OUTPUT,) & 0x00000008)));
+    __SET_EXTERNAL(data__->,OUT_DM,,DWORD_TO_BOOL(
+      (BOOL)__BOOL_LITERAL(TRUE),
+      NULL,
+      (DWORD)(__GET_EXTERNAL(data__->CONTROLLER_OUTPUT,) & 0x00000004)));
+  };
+
+  goto __end;
+
+__end:
+  return;
+} // EMERIGENCY_body__() 
 
 
 

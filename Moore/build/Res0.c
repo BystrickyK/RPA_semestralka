@@ -20,6 +20,8 @@ BOOL TASK0;
 BOOL WDT_CLOCK;
 SUPERSTATE_MACHINE RES0__SSM;
 #define SSM RES0__SSM
+EMERIGENCY RES0__EM;
+#define EM RES0__EM
 AUTOPRODUCTION RES0__AP;
 #define AP RES0__AP
 MANUALPRODUCTION RES0__MP;
@@ -36,6 +38,7 @@ void RES0_init__(void) {
   TASK0 = __BOOL_LITERAL(FALSE);
   WDT_CLOCK = __BOOL_LITERAL(FALSE);
   SUPERSTATE_MACHINE_init__(&SSM,retain);
+  EMERIGENCY_init__(&EM,retain);
   AUTOPRODUCTION_init__(&AP,retain);
   MANUALPRODUCTION_init__(&MP,retain);
   FAILURE_init__(&FAIL,retain);
@@ -47,6 +50,9 @@ void RES0_run__(unsigned long tick) {
   WDT_CLOCK = !(tick % 1);
   if (TASK0) {
     SUPERSTATE_MACHINE_body__(&SSM);
+  }
+  if (TASK0) {
+    EMERIGENCY_body__(&EM);
   }
   if (TASK0) {
     AUTOPRODUCTION_body__(&AP);
