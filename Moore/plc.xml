@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <project xmlns:ns1="http://www.plcopen.org/xml/tc6_0201" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.plcopen.org/xml/tc6_0201">
   <fileHeader companyName="Unknown" productName="Unnamed" productVersion="1" creationDateTime="2020-04-12T15:34:46"/>
-  <contentHeader name="Unnamed" modificationDateTime="2020-05-19T20:18:41">
+  <contentHeader name="Unnamed" modificationDateTime="2020-05-20T19:02:38">
     <coordinateInfo>
       <fbd>
         <scaling x="10" y="10"/>
@@ -17,6 +17,130 @@
   <types>
     <dataTypes/>
     <pous>
+      <pou name="service" pouType="program">
+        <interface>
+          <externalVars>
+            <variable name="current_superstate">
+              <type>
+                <INT/>
+              </type>
+            </variable>
+            <variable name="sensor_output">
+              <type>
+                <DWORD/>
+              </type>
+            </variable>
+            <variable name="ssm_transitions">
+              <type>
+                <DWORD/>
+              </type>
+            </variable>
+          </externalVars>
+          <localVars>
+            <variable name="in_Ap">
+              <type>
+                <BOOL/>
+              </type>
+            </variable>
+            <variable name="in_Am">
+              <type>
+                <BOOL/>
+              </type>
+            </variable>
+            <variable name="in_B">
+              <type>
+                <BOOL/>
+              </type>
+            </variable>
+            <variable name="in_C">
+              <type>
+                <BOOL/>
+              </type>
+            </variable>
+            <variable name="in_Dp">
+              <type>
+                <BOOL/>
+              </type>
+            </variable>
+            <variable name="in_Dm">
+              <type>
+                <BOOL/>
+              </type>
+            </variable>
+            <variable name="in_preasure_off">
+              <type>
+                <BOOL/>
+              </type>
+            </variable>
+          </localVars>
+          <externalVars>
+            <variable name="out_Ap">
+              <type>
+                <BOOL/>
+              </type>
+            </variable>
+            <variable name="out_Am">
+              <type>
+                <BOOL/>
+              </type>
+            </variable>
+            <variable name="out_B">
+              <type>
+                <BOOL/>
+              </type>
+            </variable>
+            <variable name="out_C">
+              <type>
+                <BOOL/>
+              </type>
+            </variable>
+            <variable name="out_Dp">
+              <type>
+                <BOOL/>
+              </type>
+            </variable>
+            <variable name="out_Dm">
+              <type>
+                <BOOL/>
+              </type>
+            </variable>
+            <variable name="out_preasure_off">
+              <type>
+                <BOOL/>
+              </type>
+            </variable>
+          </externalVars>
+        </interface>
+        <body>
+          <ST>
+            <xhtml:p><![CDATA[(* ZDE JE KONTROLOVÁNO ZDA JSME V DANÉM SUPERSTAVU *)
+IF current_superstate = 3 THEN
+  
+      (* NAČTENÍ VSTUPŮ *)
+      in_Ap :=            DWORD_TO_BOOL(sensor_output AND 2#00000000_00000000_10000000_00000000);
+      in_Am :=              DWORD_TO_BOOL(sensor_output AND 2#00000000_00000000_01000000_00000000);
+      in_B :=              DWORD_TO_BOOL(sensor_output AND 2#00000000_00000000_00100000_00000000);
+      in_C :=               DWORD_TO_BOOL(sensor_output AND 2#00000000_00000000_00010000_00000000);
+      in_Dp :=              DWORD_TO_BOOL(sensor_output AND 2#00000000_00000000_00001000_00000000);
+      in_Dm :=              DWORD_TO_BOOL(sensor_output AND 2#00000000_00000000_00000100_00000000);
+      (* empty bit in_Dp :=              DWORD_TO_BOOL(sensor_output AND 2#00000000_00000000_00000010_00000000);*)
+      in_preasure_off :=   DWORD_TO_BOOL(sensor_output AND 2#00000000_00000000_00000001_00000000);
+      
+     
+
+      
+      (* ZÁPIS VÝSTUPU DO JEDNOTLIVÝCH PROMĚNNÝCH (RUCNI POHYB MOTORU A VRETENE) *)
+      out_Ap := in_Ap;
+      out_Am := in_Am;
+      out_B := in_B;
+      out_C := in_C;
+      out_Dp := in_Dp;
+      out_Dm := in_Dm;
+      
+END_IF;]]></xhtml:p>
+          </ST>
+        </body>
+      </pou>
       <pou name="emerigency" pouType="program">
         <interface>
           <localVars>
@@ -396,56 +520,89 @@ END_IF;]]></xhtml:p>
               <type>
                 <BOOL/>
               </type>
+              <documentation>
+                <xhtml:p><![CDATA[Tlačítko emerigency]]></xhtml:p>
+              </documentation>
             </variable>
             <variable name="SAP">
               <type>
                 <BOOL/>
               </type>
+              <documentation>
+                <xhtml:p><![CDATA[Zapnutí autoprodukce]]></xhtml:p>
+              </documentation>
             </variable>
             <variable name="APF">
               <type>
                 <BOOL/>
               </type>
+              <documentation>
+                <xhtml:p><![CDATA[Ukončení autoprodukce]]></xhtml:p>
+              </documentation>
             </variable>
             <variable name="SMP">
               <type>
                 <BOOL/>
               </type>
+              <documentation>
+                <xhtml:p><![CDATA[Zapnutí manuálního módu]]></xhtml:p>
+              </documentation>
             </variable>
             <variable name="MPF">
               <type>
                 <BOOL/>
               </type>
+              <documentation>
+                <xhtml:p><![CDATA[Ukončení manuálního módu]]></xhtml:p>
+              </documentation>
             </variable>
             <variable name="SSVC">
               <type>
                 <BOOL/>
               </type>
+              <documentation>
+                <xhtml:p><![CDATA[Zahájení servisního módu]]></xhtml:p>
+              </documentation>
             </variable>
             <variable name="SVCF">
               <type>
                 <BOOL/>
               </type>
+              <documentation>
+                <xhtml:p><![CDATA[Ukončení servisního módu]]></xhtml:p>
+              </documentation>
             </variable>
             <variable name="EMF">
               <type>
                 <BOOL/>
               </type>
+              <documentation>
+                <xhtml:p><![CDATA[Ukončení emerigency módu]]></xhtml:p>
+              </documentation>
             </variable>
             <variable name="WDOx">
               <type>
                 <BOOL/>
               </type>
+              <documentation>
+                <xhtml:p><![CDATA[Přetečení časovače]]></xhtml:p>
+              </documentation>
             </variable>
             <variable name="RESx">
               <type>
                 <BOOL/>
               </type>
+              <documentation>
+                <xhtml:p><![CDATA[Nárat z chybového stavu do autoproduction módu]]></xhtml:p>
+              </documentation>
             </variable>
             <variable name="BAD">
               <type>
                 <BOOL/>
               </type>
+              <documentation>
+                <xhtml:p><![CDATA[Vstup do servisního módu z chybového]]></xhtml:p>
+              </documentation>
             </variable>
           </localVars>
         </interface>
@@ -853,6 +1010,8 @@ END_IF;]]></xhtml:p>
         <resource name="Res0">
           <task name="task0" priority="0" interval="T#100ms">
             <pouInstance name="SSM" typeName="superstate_machine"/>
+            <pouInstance name="svc" typeName="service"/>
+            <pouInstance name="EM" typeName="emerigency"/>
             <pouInstance name="AP" typeName="autoproduction"/>
             <pouInstance name="MP" typeName="manualproduction"/>
             <pouInstance name="FAIL" typeName="failure"/>

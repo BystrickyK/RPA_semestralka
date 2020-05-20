@@ -87,6 +87,58 @@ PROGRAM superstate_machine
 
 END_PROGRAM
 
+PROGRAM service
+  VAR_EXTERNAL
+    current_superstate : INT;
+    sensor_output : DWORD;
+    ssm_transitions : DWORD;
+  END_VAR
+  VAR
+    in_Ap : BOOL;
+    in_Am : BOOL;
+    in_B : BOOL;
+    in_C : BOOL;
+    in_Dp : BOOL;
+    in_Dm : BOOL;
+    in_preasure_off : BOOL;
+  END_VAR
+  VAR_EXTERNAL
+    out_Ap : BOOL;
+    out_Am : BOOL;
+    out_B : BOOL;
+    out_C : BOOL;
+    out_Dp : BOOL;
+    out_Dm : BOOL;
+    out_preasure_off : BOOL;
+  END_VAR
+
+  (* ZDE JE KONTROLOVÁNO ZDA JSME V DANÉM SUPERSTAVU *)
+  IF current_superstate = 3 THEN
+    
+        (* NAČTENÍ VSTUPŮ *)
+        in_Ap :=            DWORD_TO_BOOL(sensor_output AND 2#00000000_00000000_10000000_00000000);
+        in_Am :=              DWORD_TO_BOOL(sensor_output AND 2#00000000_00000000_01000000_00000000);
+        in_B :=              DWORD_TO_BOOL(sensor_output AND 2#00000000_00000000_00100000_00000000);
+        in_C :=               DWORD_TO_BOOL(sensor_output AND 2#00000000_00000000_00010000_00000000);
+        in_Dp :=              DWORD_TO_BOOL(sensor_output AND 2#00000000_00000000_00001000_00000000);
+        in_Dm :=              DWORD_TO_BOOL(sensor_output AND 2#00000000_00000000_00000100_00000000);
+        (* empty bit in_Dp :=              DWORD_TO_BOOL(sensor_output AND 2#00000000_00000000_00000010_00000000);*)
+        in_preasure_off :=   DWORD_TO_BOOL(sensor_output AND 2#00000000_00000000_00000001_00000000);
+        
+       
+
+        
+        (* ZÁPIS VÝSTUPU DO JEDNOTLIVÝCH PROMĚNNÝCH (RUCNI POHYB MOTORU A VRETENE) *)
+        out_Ap := in_Ap;
+        out_Am := in_Am;
+        out_B := in_B;
+        out_C := in_C;
+        out_Dp := in_Dp;
+        out_Dm := in_Dm;
+        
+  END_IF;
+END_PROGRAM
+
 PROGRAM failure
   VAR_EXTERNAL
     current_superstate : INT;
@@ -500,6 +552,7 @@ CONFIGURATION Config0
     TASK task0(INTERVAL := T#100ms,PRIORITY := 0);
     TASK WDT_clock(INTERVAL := T#10ms,PRIORITY := 0);
     PROGRAM SSM WITH task0 : superstate_machine;
+    PROGRAM svc WITH task0 : service;
     PROGRAM EM WITH task0 : emerigency;
     PROGRAM AP WITH task0 : autoproduction;
     PROGRAM MP WITH task0 : manualproduction;

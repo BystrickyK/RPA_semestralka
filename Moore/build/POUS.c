@@ -297,6 +297,77 @@ __end:
 
 
 
+void SERVICE_init__(SERVICE *data__, BOOL retain) {
+  __INIT_EXTERNAL(INT,CURRENT_SUPERSTATE,data__->CURRENT_SUPERSTATE,retain)
+  __INIT_EXTERNAL(DWORD,SENSOR_OUTPUT,data__->SENSOR_OUTPUT,retain)
+  __INIT_EXTERNAL(DWORD,SSM_TRANSITIONS,data__->SSM_TRANSITIONS,retain)
+  __INIT_VAR(data__->IN_AP,__BOOL_LITERAL(FALSE),retain)
+  __INIT_VAR(data__->IN_AM,__BOOL_LITERAL(FALSE),retain)
+  __INIT_VAR(data__->IN_B,__BOOL_LITERAL(FALSE),retain)
+  __INIT_VAR(data__->IN_C,__BOOL_LITERAL(FALSE),retain)
+  __INIT_VAR(data__->IN_DP,__BOOL_LITERAL(FALSE),retain)
+  __INIT_VAR(data__->IN_DM,__BOOL_LITERAL(FALSE),retain)
+  __INIT_VAR(data__->IN_PREASURE_OFF,__BOOL_LITERAL(FALSE),retain)
+  __INIT_EXTERNAL(BOOL,OUT_AP,data__->OUT_AP,retain)
+  __INIT_EXTERNAL(BOOL,OUT_AM,data__->OUT_AM,retain)
+  __INIT_EXTERNAL(BOOL,OUT_B,data__->OUT_B,retain)
+  __INIT_EXTERNAL(BOOL,OUT_C,data__->OUT_C,retain)
+  __INIT_EXTERNAL(BOOL,OUT_DP,data__->OUT_DP,retain)
+  __INIT_EXTERNAL(BOOL,OUT_DM,data__->OUT_DM,retain)
+  __INIT_EXTERNAL(BOOL,OUT_PREASURE_OFF,data__->OUT_PREASURE_OFF,retain)
+}
+
+// Code part
+void SERVICE_body__(SERVICE *data__) {
+  // Initialise TEMP variables
+
+  if ((__GET_EXTERNAL(data__->CURRENT_SUPERSTATE,) == 3)) {
+    __SET_VAR(data__->,IN_AP,,DWORD_TO_BOOL(
+      (BOOL)__BOOL_LITERAL(TRUE),
+      NULL,
+      (DWORD)(__GET_EXTERNAL(data__->SENSOR_OUTPUT,) & 0x00008000)));
+    __SET_VAR(data__->,IN_AM,,DWORD_TO_BOOL(
+      (BOOL)__BOOL_LITERAL(TRUE),
+      NULL,
+      (DWORD)(__GET_EXTERNAL(data__->SENSOR_OUTPUT,) & 0x00004000)));
+    __SET_VAR(data__->,IN_B,,DWORD_TO_BOOL(
+      (BOOL)__BOOL_LITERAL(TRUE),
+      NULL,
+      (DWORD)(__GET_EXTERNAL(data__->SENSOR_OUTPUT,) & 0x00002000)));
+    __SET_VAR(data__->,IN_C,,DWORD_TO_BOOL(
+      (BOOL)__BOOL_LITERAL(TRUE),
+      NULL,
+      (DWORD)(__GET_EXTERNAL(data__->SENSOR_OUTPUT,) & 0x00001000)));
+    __SET_VAR(data__->,IN_DP,,DWORD_TO_BOOL(
+      (BOOL)__BOOL_LITERAL(TRUE),
+      NULL,
+      (DWORD)(__GET_EXTERNAL(data__->SENSOR_OUTPUT,) & 0x00000800)));
+    __SET_VAR(data__->,IN_DM,,DWORD_TO_BOOL(
+      (BOOL)__BOOL_LITERAL(TRUE),
+      NULL,
+      (DWORD)(__GET_EXTERNAL(data__->SENSOR_OUTPUT,) & 0x00000400)));
+    __SET_VAR(data__->,IN_PREASURE_OFF,,DWORD_TO_BOOL(
+      (BOOL)__BOOL_LITERAL(TRUE),
+      NULL,
+      (DWORD)(__GET_EXTERNAL(data__->SENSOR_OUTPUT,) & 0x00000100)));
+    __SET_EXTERNAL(data__->,OUT_AP,,__GET_VAR(data__->IN_AP,));
+    __SET_EXTERNAL(data__->,OUT_AM,,__GET_VAR(data__->IN_AM,));
+    __SET_EXTERNAL(data__->,OUT_B,,__GET_VAR(data__->IN_B,));
+    __SET_EXTERNAL(data__->,OUT_C,,__GET_VAR(data__->IN_C,));
+    __SET_EXTERNAL(data__->,OUT_DP,,__GET_VAR(data__->IN_DP,));
+    __SET_EXTERNAL(data__->,OUT_DM,,__GET_VAR(data__->IN_DM,));
+  };
+
+  goto __end;
+
+__end:
+  return;
+} // SERVICE_body__() 
+
+
+
+
+
 void FAILURE_init__(FAILURE *data__, BOOL retain) {
   __INIT_EXTERNAL(INT,CURRENT_SUPERSTATE,data__->CURRENT_SUPERSTATE,retain)
   __INIT_EXTERNAL(DWORD,SSM_TRANSITIONS,data__->SSM_TRANSITIONS,retain)

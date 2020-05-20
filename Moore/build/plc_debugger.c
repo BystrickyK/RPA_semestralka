@@ -26,7 +26,7 @@ void __publish_debug (void){}
 #include <stdio.h>
 
 #ifndef TARGET_ONLINE_DEBUG_DISABLE
-#define BUFFER_SIZE 141
+#define BUFFER_SIZE 165
 
 /* Atomically accessed variable for buffer state */
 #define BUFFER_FREE 0
@@ -45,6 +45,7 @@ static unsigned int retain_offset = 0;
  * Declare programs 
  **/
 extern SUPERSTATE_MACHINE RES0__SSM;
+extern SERVICE RES0__SVC;
 extern EMERIGENCY RES0__EM;
 extern AUTOPRODUCTION RES0__AP;
 extern MANUALPRODUCTION RES0__MP;
@@ -68,6 +69,7 @@ extern __IEC_BOOL_t CONFIG0__OUT_DP;
 extern __IEC_BOOL_t CONFIG0__OUT_DM;
 extern __IEC_BOOL_t CONFIG0__OUT_PREASURE_OFF;
 extern       SUPERSTATE_MACHINE   RES0__SSM;
+extern       SERVICE   RES0__SVC;
 extern       EMERIGENCY   RES0__EM;
 extern       AUTOPRODUCTION   RES0__AP;
 extern       MANUALPRODUCTION   RES0__MP;
@@ -112,6 +114,23 @@ static dbgvardsc_t dbgvardsc[] = {
 {&(RES0__SSM.WDOX), BOOL_ENUM},
 {&(RES0__SSM.RESX), BOOL_ENUM},
 {&(RES0__SSM.BAD), BOOL_ENUM},
+{&(RES0__SVC.CURRENT_SUPERSTATE), INT_P_ENUM},
+{&(RES0__SVC.SENSOR_OUTPUT), DWORD_P_ENUM},
+{&(RES0__SVC.SSM_TRANSITIONS), DWORD_P_ENUM},
+{&(RES0__SVC.IN_AP), BOOL_ENUM},
+{&(RES0__SVC.IN_AM), BOOL_ENUM},
+{&(RES0__SVC.IN_B), BOOL_ENUM},
+{&(RES0__SVC.IN_C), BOOL_ENUM},
+{&(RES0__SVC.IN_DP), BOOL_ENUM},
+{&(RES0__SVC.IN_DM), BOOL_ENUM},
+{&(RES0__SVC.IN_PREASURE_OFF), BOOL_ENUM},
+{&(RES0__SVC.OUT_AP), BOOL_P_ENUM},
+{&(RES0__SVC.OUT_AM), BOOL_P_ENUM},
+{&(RES0__SVC.OUT_B), BOOL_P_ENUM},
+{&(RES0__SVC.OUT_C), BOOL_P_ENUM},
+{&(RES0__SVC.OUT_DP), BOOL_P_ENUM},
+{&(RES0__SVC.OUT_DM), BOOL_P_ENUM},
+{&(RES0__SVC.OUT_PREASURE_OFF), BOOL_P_ENUM},
 {&(RES0__EM.CONTROLLER_OUTPUT), DWORD_P_ENUM},
 {&(RES0__EM.CURRENT_SUPERSTATE), INT_P_ENUM},
 {&(RES0__EM.SENSOR_OUTPUT), DWORD_P_ENUM},
