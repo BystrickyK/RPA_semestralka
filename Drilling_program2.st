@@ -525,11 +525,11 @@ END_PROGRAM
 
 CONFIGURATION Config0
   VAR_GLOBAL
-    controller_output AT %MD0 : WORD;
+    controller_output : WORD;
     WDT AT %MW2 : UINT;
     current_superstate AT %MW0 : INT;
     current_state AT %MW1 : INT;
-    sensor_output : WORD;
+    sensor_output AT %MW4: WORD;
     ssm_transitions AT %MW3 : WORD;
     out_Ap : BOOL;
     out_Am : BOOL;
