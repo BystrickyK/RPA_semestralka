@@ -530,7 +530,7 @@ CONFIGURATION Config0
     current_superstate AT %MW0 : INT;
     current_state AT %MW1 : INT;
     sensor_output : WORD;
-    ssm_transitions : WORD;
+    ssm_transitions AT %MW3 : WORD;
     out_Ap : BOOL;
     out_Am : BOOL;
     out_B : BOOL;

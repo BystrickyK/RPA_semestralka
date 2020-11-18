@@ -1,4 +1,11 @@
+<<<<<<< HEAD
 <?xml version='1.0' encoding='utf-8'?>
 <BeremizRoot xmlns:xsd="http://www.w3.org/2001/XMLSchema" URI_location="LOCAL://">
   <TargetType/>
 </BeremizRoot>
+=======
+<?xml version='1.0' encoding='utf-8'?>
+<BeremizRoot xmlns:xsd="http://www.w3.org/2001/XMLSchema" URI_location="LOCAL://">
+  <TargetType/>
+</BeremizRoot>
+>>>>>>> 553e0b3e32c973bc8a997dc9b25d87bddf8ad5ea
