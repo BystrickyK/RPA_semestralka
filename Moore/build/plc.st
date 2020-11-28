@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 TYPE
   LOGLEVEL : (CRITICAL, WARNING, INFO, DEBUG) := INFO;
 END_TYPE
@@ -167,7 +166,6 @@ PROGRAM superstate_machine
 
         
 
-
   (* superstate transitions *)
   FOR col := 0 TO 10 DO
     IF (transition_matrix[current_superstate,col] <> -1) THEN
@@ -179,6 +177,7 @@ PROGRAM superstate_machine
   END_FOR;
 
   ssm_transitions := ssm_transitions AND NOT 4;
+
 END_PROGRAM
 
 PROGRAM service
@@ -217,7 +216,7 @@ PROGRAM service
         in_Dp :=            WORD_TO_BOOL(sensor_output AND 2#00001000_00000000);
         in_Dm :=            WORD_TO_BOOL(sensor_output AND 2#00000100_00000000);
         (* empty bit in_Dp :=              WORD_TO_BOOL(sensor_output AND 2#00000010_00000000);*)
-        in_preasure_off :=  WORD_TO_BOOL(sensor_output AND 2#00000001_00000000);
+        in_preasure_off :=   WORD_TO_BOOL(sensor_output AND 2#00000001_00000000);
         
        
 
@@ -271,9 +270,10 @@ PROGRAM autoproduction
     WDT : UINT;
     ssm_transitions : WORD;
     current_state : INT;
+    ap_step : UINT;
   END_VAR
   VAR
-    column : INT;
+    column : UINT;
   END_VAR
   VAR_EXTERNAL
     out_Ap : BOOL;
@@ -383,14 +383,14 @@ PROGRAM autoproduction
   IF current_superstate = 1 THEN
     
         (* NAČTENÍ VSTUPŮ *)
-        in_prox := WORD_TO_BOOL(sensor_output AND 2#00000000_00000000_00000000_10000000);
-        in_a0 := WORD_TO_BOOL(sensor_output AND 2#00000000_00000000_00000000_01000000);
-        in_a1 := WORD_TO_BOOL(sensor_output AND 2#00000000_00000000_00000000_00100000);
-        in_b := WORD_TO_BOOL(sensor_output AND 2#00000000_00000000_00000000_00010000);
-        in_c0 := WORD_TO_BOOL(sensor_output AND 2#00000000_00000000_00000000_00001000);
-        in_c1 := WORD_TO_BOOL(sensor_output AND 2#00000000_00000000_00000000_00000100);
-        in_d0 := WORD_TO_BOOL(sensor_output AND 2#00000000_00000000_00000000_00000010);
-        in_d1 := WORD_TO_BOOL(sensor_output AND 2#00000000_00000000_00000000_00000001);
+        in_prox := WORD_TO_BOOL(sensor_output AND 2#00000000_10000000);
+        in_a0 := WORD_TO_BOOL(sensor_output AND 2#00000000_01000000);
+        in_a1 := WORD_TO_BOOL(sensor_output AND 2#00000000_00100000);
+        in_b := WORD_TO_BOOL(sensor_output AND 2#00000000_00010000);
+        in_c0 := WORD_TO_BOOL(sensor_output AND 2#00000000_00001000);
+        in_c1 := WORD_TO_BOOL(sensor_output AND 2#00000000_00000100);
+        in_d0 := WORD_TO_BOOL(sensor_output AND 2#00000000_00000010);
+        in_d1 := WORD_TO_BOOL(sensor_output AND 2#00000000_00000001);
         
        
         
@@ -399,21 +399,24 @@ PROGRAM autoproduction
           IF (transitionMatrix[current_state,column] <> -1) THEN
             IF (sensor_output AND maskMatrix[column]) = valueMatrix[column] THEN
               current_state :=  transitionMatrix[current_state,column];
+              ap_step := ap_step + 1;
               WDT := 0; (*RESET watchdogtimer*)
             END_IF;
           END_IF;
         END_FOR;
         
         (* ZÁPIS SIGNÁLU NA VÝSTUP *)
-        controller_output := outputMatrix[current_state];
+        IF WDT > 50 THEN
+          controller_output := outputMatrix[current_state];
+        END_IF;
         
         (* ZÁPIS VÝSTUPU DO JEDNOTLIVÝCH PROMĚNNÝCH *)
-        out_Ap := WORD_TO_BOOL(controller_output AND 2#00000000_00000000_00000000_10000000);
-        out_Am := WORD_TO_BOOL(controller_output AND 2#00000000_00000000_00000000_01000000);
-        out_B := WORD_TO_BOOL(controller_output AND 2#00000000_00000000_00000000_00100000);
-        out_C := WORD_TO_BOOL(controller_output AND 2#00000000_00000000_00000000_00010000);
-        out_Dp := WORD_TO_BOOL(controller_output AND 2#00000000_00000000_00000000_00001000);
-        out_Dm := WORD_TO_BOOL(controller_output AND 2#00000000_00000000_00000000_00000100);
+        out_Ap := WORD_TO_BOOL(controller_output AND 2#00000000_10000000);
+        out_Am := WORD_TO_BOOL(controller_output AND 2#00000000_01000000);
+        out_B := WORD_TO_BOOL(controller_output AND 2#00000000_00100000);
+        out_C := WORD_TO_BOOL(controller_output AND 2#00000000_00010000);
+        out_Dp := WORD_TO_BOOL(controller_output AND 2#00000000_00001000);
+        out_Dm := WORD_TO_BOOL(controller_output AND 2#00000000_00000100);
         
         (* watchdog timer  - KONTROLUJE ZDA NEDOŠLO K ZASEKNUTÍ*)                                                 
         IF WDT > 3000 THEN
@@ -423,8 +426,9 @@ PROGRAM autoproduction
         
        (* BYLO DOSAŽENO KONEČNÉHO STAVU SKOK DO IDDLE *)                                              
         IF current_state = 10 THEN
-          ssm_transitions := 4;
+          ssm_transitions := ssm_transitions OR 4;
           current_state := 0;
+          ap_step := 0;
         END_IF;
         
   END_IF;
@@ -445,7 +449,7 @@ PROGRAM manualproduction
     current_state : INT;
   END_VAR
   VAR
-    column : INT;
+    column : UINT;
   END_VAR
 
   (*TESTOVACÍ SEKVENCE - VÝSTUP ZE SENZORŮ*)
@@ -599,6 +603,13 @@ PROGRAM emerigency
 
 
 
+
+
+
+
+
+
+
   (* ZDE JE KONTROLOVÁNO ZDA JSME V DANÉM SUPERSTAVU *)
   IF current_superstate = 4 THEN
         
@@ -624,6 +635,7 @@ CONFIGURATION Config0
     WDT : UINT;
     current_superstate : INT;
     current_state : INT;
+    ap_step : UINT := 0;
     sensor_output : WORD;
     ssm_transitions : WORD;
     out_Ap : BOOL;
@@ -647,240 +659,3 @@ CONFIGURATION Config0
     PROGRAM WDTimer WITH WDT_clock : watchdogtimer;
   END_RESOURCE
 END_CONFIGURATION
-=======
-TYPE
-  LOGLEVEL : (CRITICAL, WARNING, INFO, DEBUG) := INFO;
-END_TYPE
-
-FUNCTION_BLOCK LOGGER
-  VAR_INPUT
-    TRIG : BOOL;
-    MSG : STRING;
-    LEVEL : LOGLEVEL := INFO;
-  END_VAR
-  VAR
-    TRIG0 : BOOL;
-  END_VAR
-
-  IF TRIG AND NOT TRIG0 THEN
-  {{
-   LogMessage(GetFbVar(LEVEL),(char*)GetFbVar(MSG, .body),GetFbVar(MSG, .len));
-  }}
-  END_IF;
-  TRIG0:=TRIG;
-END_FUNCTION_BLOCK
-
-
-
-FUNCTION_BLOCK python_eval
-  VAR_INPUT
-    TRIG : BOOL;
-    CODE : STRING;
-  END_VAR
-  VAR_OUTPUT
-    ACK : BOOL;
-    RESULT : STRING;
-  END_VAR
-  VAR
-    STATE : DWORD;
-    BUFFER : STRING;
-    PREBUFFER : STRING;
-    TRIGM1 : BOOL;
-    TRIGGED : BOOL;
-  END_VAR
-
-  {extern void __PythonEvalFB(int, PYTHON_EVAL*);__PythonEvalFB(0, data__);}
-END_FUNCTION_BLOCK
-
-FUNCTION_BLOCK python_poll
-  VAR_INPUT
-    TRIG : BOOL;
-    CODE : STRING;
-  END_VAR
-  VAR_OUTPUT
-    ACK : BOOL;
-    RESULT : STRING;
-  END_VAR
-  VAR
-    STATE : DWORD;
-    BUFFER : STRING;
-    PREBUFFER : STRING;
-    TRIGM1 : BOOL;
-    TRIGGED : BOOL;
-  END_VAR
-
-  {extern void __PythonEvalFB(int, PYTHON_EVAL*);__PythonEvalFB(1,(PYTHON_EVAL*)(void*)data__);}
-END_FUNCTION_BLOCK
-
-FUNCTION_BLOCK python_gear
-  VAR_INPUT
-    N : UINT;
-    TRIG : BOOL;
-    CODE : STRING;
-  END_VAR
-  VAR_OUTPUT
-    ACK : BOOL;
-    RESULT : STRING;
-  END_VAR
-  VAR
-    py_eval : python_eval;
-    COUNTER : UINT;
-    ADD10_OUT : UINT;
-    EQ13_OUT : BOOL;
-    SEL15_OUT : UINT;
-    AND7_OUT : BOOL;
-  END_VAR
-
-  ADD10_OUT := ADD(COUNTER, 1);
-  EQ13_OUT := EQ(N, ADD10_OUT);
-  SEL15_OUT := SEL(EQ13_OUT, ADD10_OUT, 0);
-  COUNTER := SEL15_OUT;
-  AND7_OUT := AND(EQ13_OUT, TRIG);
-  py_eval(TRIG := AND7_OUT, CODE := CODE);
-  ACK := py_eval.ACK;
-  RESULT := py_eval.RESULT;
-END_FUNCTION_BLOCK
-
-
-FUNCTION_BLOCK superstateAP
-  VAR_INPUT
-    row : UINT := 0;
-    col : UINT := 0;
-  END_VAR
-  VAR_OUTPUT
-    out : INT := 0;
-  END_VAR
-
-  VAR
-  transitionMatrix: ARRAY[0..10,0..10] OF INT := [
-  (* emg   prox  a1      b1      c1      c0d0    d1      c0d1      b0      d0      a0 *)
-      510,    1,    -1,     -1,     -1,      -1,     -1,     -1,      -1,     -1,     -1, (* START - 100 *)
-      510,   -1,     2,     -1,     -1,      -1,     -1,     -1,      -1,     -1,     -1, (* 101 *)
-      510,   -1,    -1,      3,     -1,      -1,     -1,     -1,      -1,     -1,     -1, (* 102 *)
-      510,   -1,    -1,     -1,      4,      -1,     -1,     -1,      -1,     -1,     -1, (* 103 *)
-      510,   -1,    -1,     -1,     -1,       5,     -1,      6,      -1,     -1,     -1, (* 104 *)
-      510,   -1,    -1,     -1,     -1,      -1,      3,     -1,      -1,     -1,     -1, (* 105 *)
-      510,   -1,    -1,     -1,     -1,      -1,     -1,     -1,       7,     -1,     -1, (* 106 *)
-      510,   -1,    -1,     -1,     -1,      -1,     -1,     -1,      -1,      8,     -1, (* 107 *)
-      510,   -1,    -1,     -1,     -1,      -1,     -1,     -1,      -1,     -1,      9, (* 108 *)
-      510,   -1,    -1,     -1,     -1,      -1,     -1,     -1,      -1,     -1,     -1, (* 109 *)
-      510,   -1,    -1,     -1,     -1,      -1,     -1,     -1,      -1,     -1,     -1 (* 110 *)
-    ];
-  END_VAR
-
-  out := transitionMatrix[row,col];
-END_FUNCTION_BLOCK
-
-PROGRAM MooreAutomaton
-  VAR
-    a0 : BOOL := 1;
-    a1 : BOOL := 0;
-    b0 : BOOL := 1;
-    b1 : BOOL := 0;
-    c0 : BOOL := 1;
-    c1 : BOOL := 0;
-    d0 : BOOL := 1;
-    d1 : BOOL := 0;
-    prox : WORD := 0;
-    currentState : INT := 0;
-    sensorOutput : WORD := 2#0000000000000000;
-    controllerOutput : BYTE := 0;
-    testVar : INT := 0;
-    col : INT := 0;
-    tmp : INT := 0;
-    tmp0 : DINT := 0;
-    superstate : superstateAP;
-  END_VAR
-
-  VAR
-  state: ARRAY[0..11] OF WORD  := [ (* 0 0 0 0 0 0 0 a0 a1 b0 b1 c0 c1 d0 d1 prox *)
-    2#0000000_101010100, (* init                  340 1*)
-    2#0000000_101010101, (* prox -> 1             341 2*)
-    2#0000000_011010101, (* a0 -> 0, a1 -> 1      213 3*)
-    2#0000000_010110101, (* b0 -> 0, b1 -> 1      181 4*)
-    2#0000000_010101101, (* c0 -> 0, c1 -> 1      173 5*)
-    2#0000000_010110101, (* c0 -> 1, c1 -> 0      181 6*)
-    2#0000000_010110011, (* d0 -> 0, d1 -> 1      179 7*)
-    2#0000000_010101011, (* c0 -> 0, c1 -> 1      171 8*)
-    2#0000000_010110011, (* c0 -> 1, c1 -> 0      179 9*)
-    2#0000000_011010011, (* b0 -> 1, b1 -> 0      211 10*)
-    2#0000000_011010101, (* d0 -> 1, d1 -> 0      213 11*)
-    2#0000000_101010101  (* a0 -> 1, a1 -> 0      341 12*)
-    (* back to init state *)
-    ];
-  END_VAR
-
-  VAR
-  transitionMasks: ARRAY[0..11] OF WORD  := [ (* 0 0 0 0 0 0 emg a0 a1 b0 b1 c0 c1 d0 d1 prox *)
-    2#0000001_000000000,
-    2#0000000_000000001, (*       prox 1*)
-    2#0000000_010000000, (*       a1 2*)
-    2#0000000_000100000, (*       b1 3*)
-    2#0000000_000001000, (*       c1 4*)
-    2#0000000_000010100, (*       c0d0 5*)
-    2#0000000_000000010, (*       d1 6*)
-    2#0000000_000010010, (*       c0d1 7*)
-    2#0000000_001000000, (*       b0 8*)
-    2#0000000_000000100, (*       d0 9*)
-    2#0000000_100000000 (*        a0 10*)
-    (* back to init state *)
-    ];
-  END_VAR
-
-  VAR
-  transitionMatrix: ARRAY[0..10,0..10] OF INT := [
-  (* emg   prox  a1      b1      c1      c0d0    d1      c0d1      b0      d0      a0 *)
-      510,    1,    -1,     -1,     -1,      -1,     -1,     -1,      -1,     -1,     -1, (* START - 100 *)
-      510,   -1,     2,     -1,     -1,      -1,     -1,     -1,      -1,     -1,     -1, (* 101 *)
-      510,   -1,    -1,      3,     -1,      -1,     -1,     -1,      -1,     -1,     -1, (* 102 *)
-      510,   -1,    -1,     -1,      4,      -1,     -1,     -1,      -1,     -1,     -1, (* 103 *)
-      510,   -1,    -1,     -1,     -1,       5,     -1,      6,      -1,     -1,     -1, (* 104 *)
-      510,   -1,    -1,     -1,     -1,      -1,      3,     -1,      -1,     -1,     -1, (* 105 *)
-      510,   -1,    -1,     -1,     -1,      -1,     -1,     -1,       7,     -1,     -1, (* 106 *)
-      510,   -1,    -1,     -1,     -1,      -1,     -1,     -1,      -1,      8,     -1, (* 107 *)
-      510,   -1,    -1,     -1,     -1,      -1,     -1,     -1,      -1,     -1,      9, (* 108 *)
-      510,   -1,    -1,     -1,     -1,      -1,     -1,     -1,      -1,     -1,     -1, (* 109 *)
-      510,   -1,    -1,     -1,     -1,      -1,     -1,     -1,      -1,     -1,     -1 (* 110 *)
-    ];
-  END_VAR 
-
-  VAR
-  stateOutput: ARRAY[0..11] OF BYTE  := [ (* A+ A- B C D+ D- 0 0 /// State transitions *)
-    2#00000000, (* init - wait                                       0 0 *)
-    2#10000000, (* prox -> 1 - set A+                                128 1*)
-    2#00100000, (* a0 -> 0, a1 -> 1 - set B, reset A+ (bistable)     32 2*)
-    2#00110000, (* b0 -> 0, b1 -> 1 - set C                          48 3*)
-    2#00100000, (* c0 -> 0, c1 -> 1 - reset C                        32 4*)
-    2#00101000, (* c0 -> 1, c1 -> 0 - set D+                         40 5*)
-    2#00000000, (* c0 -> 1, c1 -> 0 - reset B                        0 6*)
-    2#00000100, (* b0 -> 1, b1 -> 0 - set D-                         8 7*)
-    2#01000000, (* d0 -> 1, d1 -> 0 - reset D-, set A-               64 8*)
-    2#00000000 (*  a0 -> 1, a1 -> 0 - reset A-                       0 9*)
-    (* back to init state *)
-    ];
-  END_VAR
-
-  FOR col := 0 TO 10 DO
-    IF (transitionMatrix[currentState MOD 100,col] <> -1) THEN
-      IF (sensorOutput AND transitionMasks[col]) = transitionMasks[col] THEN
-        currentState :=  transitionMatrix[currentState MOD 100,col];
-        superstate(
-        row:=4,
-        col:=5,
-        out => tmp);  
-      END_IF;
-    END_IF;
-  END_FOR;
-
-  controllerOutput := stateOutput[currentState];
-END_PROGRAM
-
-
-CONFIGURATION Config0
-
-  RESOURCE Res0 ON PLC
-    TASK task0(INTERVAL := T#20ms,PRIORITY := 0);
-    PROGRAM instance0 WITH task0 : MooreAutomaton;
-  END_RESOURCE
-END_CONFIGURATION
->>>>>>> 553e0b3e32c973bc8a997dc9b25d87bddf8ad5ea

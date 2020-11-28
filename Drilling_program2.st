@@ -525,7 +525,7 @@ END_PROGRAM
 
 CONFIGURATION Config0
   VAR_GLOBAL
-    controller_output : WORD;
+    controller_output : WORD AT %MW5;
     WDT AT %MW2 : UINT;
     current_superstate AT %MW0 : INT;
     current_state AT %MW1 : INT;
