@@ -76,7 +76,7 @@ PROGRAM superstate_machine
   FOR col := 0 TO 10 DO
     IF (transition_matrix[current_superstate,col] <> -1) THEN
       IF (ssm_transitions AND transition_masks[col]) = transition_masks[col] THEN
-        current_superstate :=  transition_matrix[current_superstate,col];
+        current_superstate := transition_matrix[current_superstate,col];
         WDT := 0; (*RESET WDT*)
       END_IF;
     END_IF;
@@ -327,7 +327,7 @@ PROGRAM autoproduction
         (* watchdog timer  - KONTROLUJE ZDA NEDOŠLO K ZASEKNUTÍ*)                                                 
         IF WDT > 3000 THEN
           (* set failure symptome WDOx as true *)
-          ssm_transitions := 256;
+          ssm_transitions := ssm_transitions OR 256;
         END_IF;
         
        (* BYLO DOSAŽENO KONEČNÉHO STAVU SKOK DO IDDLE *)                                              

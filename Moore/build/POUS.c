@@ -556,7 +556,7 @@ void AUTOPRODUCTION_body__(AUTOPRODUCTION *data__) {
       NULL,
       (WORD)(__GET_EXTERNAL(data__->CONTROLLER_OUTPUT,) & 0x0004)));
     if ((__GET_EXTERNAL(data__->WDT,) > 3000)) {
-      __SET_EXTERNAL(data__->,SSM_TRANSITIONS,,256);
+      __SET_EXTERNAL(data__->,SSM_TRANSITIONS,,(__GET_EXTERNAL(data__->SSM_TRANSITIONS,) | 256));
     };
     if ((__GET_EXTERNAL(data__->CURRENT_STATE,) == 10)) {
       __SET_EXTERNAL(data__->,SSM_TRANSITIONS,,(__GET_EXTERNAL(data__->SSM_TRANSITIONS,) | 4));

@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <project xmlns:ns1="http://www.plcopen.org/xml/tc6_0201" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.plcopen.org/xml/tc6_0201">
   <fileHeader companyName="Unknown" productName="Unnamed" productVersion="1" creationDateTime="2020-04-12T15:34:46"/>
-  <contentHeader name="Unnamed" modificationDateTime="2020-11-28T18:43:46">
+  <contentHeader name="Unnamed" modificationDateTime="2020-11-28T20:41:33">
     <coordinateInfo>
       <fbd>
         <scaling x="10" y="10"/>
@@ -636,7 +636,7 @@ END_VAR
 FOR col := 0 TO 10 DO
   IF (transition_matrix[current_superstate,col] <> -1) THEN
     IF (ssm_transitions AND transition_masks[col]) = transition_masks[col] THEN
-      current_superstate :=  transition_matrix[current_superstate,col];
+      current_superstate := transition_matrix[current_superstate,col];
       WDT := 0; (*RESET WDT*)
     END_IF;
   END_IF;
@@ -930,7 +930,7 @@ IF current_superstate = 1 THEN
       (* watchdog timer  - KONTROLUJE ZDA NEDOŠLO K ZASEKNUTÍ*)                                                 
       IF WDT > 3000 THEN
         (* set failure symptome WDOx as true *)
-        ssm_transitions := 256;
+        ssm_transitions := ssm_transitions OR 256;
       END_IF;
       
      (* BYLO DOSAŽENO KONEČNÉHO STAVU SKOK DO IDDLE *)                                              
